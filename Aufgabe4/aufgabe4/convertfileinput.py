@@ -3,7 +3,7 @@ import json, redis
 redis_connection = redis.StrictRedis(host='localhost', port='6379', db=0)
 
 def readData():
-    with open("C:\Users\Paddy-Gaming\Downloads\plz.data", "r") as file:
+    with open("/home/nosql/Downloads/plz.data", "r") as file:
         lines = []
         for line in file:
             lines.append(line)
@@ -17,3 +17,5 @@ def importDataToRedis():
 
         redis_connection.set(key, value)
         redis_connection.rpush(value, key)
+print "Successful imported"
+print importDataToRedis()
