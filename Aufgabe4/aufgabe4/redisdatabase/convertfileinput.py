@@ -14,11 +14,22 @@ def importDataToRedis():
         data = json.loads(object)
         key = data['_id']
         value = data['city']
-
+        print key
         redis_connection.set(key, value)
+        # rpush adds values to the same town
         redis_connection.rpush(value, key)
+print importDataToRedis()
 
-def searchTown():
-    town = redis_connection.get('01081')
+def searchTownByPLZ():
+    town = redis_connection.get('07419')
     print "Die gesuchte Stadt ist: " + town
-print searchTown()
+print searchTownByPLZ()
+
+def searchPLZByTown():
+    listWithPLZ = []
+    for elem in redis_connection.lrange("HAMBURG", 0, -1):
+        listWithPLZ.append(elem)
+    print listWithPLZ
+print searchPLZByTown()
+
+# TODO: Main Methode bzw. GUI zum ausführen der Befehle!
