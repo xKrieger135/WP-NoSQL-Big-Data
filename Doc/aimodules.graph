@@ -1,0 +1,24 @@
+{ "Modulname" : "GI"     , "Vorraussetzung" : [keine]}
+{ "Modulname" : "BWL-1"  , "Vorraussetzung" : [keine]}
+{ "Modulname" : "PR-1"   , "Vorraussetzung" : [keine]}
+{ "Modulname" : "PRP-1"  , "Vorraussetzung" : [keine]}
+{ "Modulname" : "MG"     , "Vorraussetzung" : [keine]}
+{ "Modulname" : "DB"     , "Vorraussetzung" : [PR-1, PRP-1, MG]}
+{ "Modulname" : "LB"     , "Vorraussetzung" : [GI, MG]}
+{ "Modulname" : "RMP"    , "Vorraussetzung" : [GI]}
+{ "Modulname" : "AF"     , "Vorraussetzung" : [MG]}
+{ "Modulname" : "PR-2"   , "Vorraussetzung" : [PR-1, PRP-1, GI]}
+{ "Modulname" : "PRP-2"  , "Vorraussetzung" : [PR-1, PRP-1, GI]}
+{ "Modulname" : "GKA"    , "Vorraussetzung" : [MG, AF, LB, GI]}
+{ "Modulname" : "AD"     , "Vorraussetzung" : [PR-1, PR-2, PRP-1, PRP-2]}
+{ "Modulname" : "BS"     , "Vorraussetzung" : [RMP, PR-1, PR-2, PRP-1, PRP-2]}
+{ "Modulname" : "BWL-2"  , "Vorraussetzung" : [BWL-1, DB]}
+{ "Modulname" : "SE-1"   , "Vorraussetzung" : [DB, PR-1, PR-2, PRP-1, PRP-2]}
+{ "Modulname" : "RN"     , "Vorraussetzung" : [PR-1, PR-2, PRP-1, PRP-2, BS]}
+{ "Modulname" : "SE-2"   , "Vorraussetzung" : [SE-1, DB, PR-1, PR-2, PRP-1, PRP-2]}
+{ "Modulname" : "CI"     , "Vorraussetzung" : [AF]}
+{ "Modulname" : "WP-1"   , "Vorraussetzung" : [keine]}
+{ "Modulname" : "GW"     , "Vorraussetzung" : [keine]}
+{ "Modulname" : "VS"     , "Vorraussetzung" : [BS, RN]}
+{ "Modulname" : "AI"     , "Vorraussetzung" : [PR-1, PR-2, PRP-1, PRP-2, DB, SE-1, SE-2]}
+{ "Modulname" : "WP-2"   , "Vorraussetzung" : [keine]}
