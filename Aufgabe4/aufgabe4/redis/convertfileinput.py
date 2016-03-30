@@ -17,5 +17,8 @@ def importDataToRedis():
 
         redis_connection.set(key, value)
         redis_connection.rpush(value, key)
-print "Successful imported"
-print importDataToRedis()
+
+def searchTown():
+    town = redis_connection.get('01081')
+    print "Die gesuchte Stadt ist: " + town
+print searchTown()
