@@ -7,7 +7,7 @@ modulList = []
 relationshipList = []
 
 def readData():
-    with open("/home/nosql/Downloads/aimodules.graph", "r") as file:
+    with open("/home/nosql/Documents/WP-NoSQL-Big-Data/Doc/aimodules.graph", "r") as file:
         lines = []
         for line in file:
             lines.append(line)
@@ -18,11 +18,13 @@ def createLabels():
     return label
 
 def createNodes():
+    i = 0
     for module in readData():
         data = json.loads(module)
 
-        module = data['Modulname']
-        modulList.append(module)
+        modulename = data['Modulname']
+        modulList.append(modulename)
+        print modulList
     print modulList
 print  createNodes()
 
