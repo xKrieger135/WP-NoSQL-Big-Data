@@ -1,12 +1,11 @@
 import json
-from py2neo import Graph, Path
+from py2neo import neo4j, Graph, Path, Node, Relationship
 from neo4jrestclient.client import GraphDatabase
 
 neoDB = GraphDatabase("http://localhost:7474", username="neo4j", password="master")
-graph = Graph()
 modulList = []
 relationshipList = []
-
+nodeList = []
 def readData():
     # with open("/home/nosql/Documents/WP-NoSQL-Big-Data/Doc/aimodules.graph", "r") as file:
     with open("D:\Uni\WP-NoSQL-Big-Data\Doc\\aimodules.graph", "r") as file:
@@ -16,26 +15,22 @@ def readData():
     return lines
 
 def createLabels():
-    label = neoDB.labels.create("teeeeeghfgeset")
+    label = neoDB.labels.create("teeebu")
     return label
 
 def createNodes():
-    label = createLabels()
-    c = graph.cypher.begin()
+    # label = createLabels()
     for module in readData():
         data = json.loads(module)
 
         modulename = data['Modulname']
         relationship = data['Vorraussetzung']
-        m = neoDB.nodes.create(name=modulename)
-        label.add(m)
+        node = Node("Module", modulename)
 
-    for vorraussetzung in readData():
-        data = json.loads(vorraussetzung)
-
-        modul = data['Modulname']
-        vorraussetzungen = data['Vorraussetzung']
-
-
-
+        nodeList.append(node)
+        # m = neoDB.nodes.create(name=modulename)
+        # label.add(m)
+    print nodeList
 print  createNodes()
+
+# TODO: Vielleicht eine Klasse für Nodes, um die jeweiligen nodes speichern zu können um dann darauf zugreifen zu können!
