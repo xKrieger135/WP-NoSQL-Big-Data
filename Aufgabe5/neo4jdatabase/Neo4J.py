@@ -7,8 +7,8 @@ modulList = []
 relationshipList = []
 nodeList = []
 def readData():
-    # with open("/home/nosql/Documents/WP-NoSQL-Big-Data/Doc/aimodules.graph", "r") as file:
-    with open("D:\Uni\WP-NoSQL-Big-Data\Doc\\aimodules.graph", "r") as file:
+    with open("/home/nosql/Documents/WP-NoSQL-Big-Data/Doc/aimodules.graph", "r") as file:
+    # with open("D:\Uni\WP-NoSQL-Big-Data\Doc\\aimodules.graph", "r") as file:
         lines = []
         for line in file:
             lines.append(line)
@@ -19,6 +19,7 @@ def createLabels():
     return label
 
 def createNodes():
+    #TODO Vielleicht eine Klasse fuer Nodes, um die jeweiligen nodes speichern zu koennen um dann darauf zugreifen zu koennen
     # label = createLabels()
     for module in readData():
         data = json.loads(module)
@@ -33,4 +34,3 @@ def createNodes():
     print nodeList
 print  createNodes()
 
-# TODO: Vielleicht eine Klasse für Nodes, um die jeweiligen nodes speichern zu können um dann darauf zugreifen zu können!

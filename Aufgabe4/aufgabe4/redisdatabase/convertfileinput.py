@@ -14,7 +14,6 @@ def importDataToRedis():
         data = json.loads(object)
         key = data['_id']
         value = data['city']
-        print key
         redis_connection.set(key, value)
         # rpush adds values to the same town
         redis_connection.rpush(value, key)
@@ -31,5 +30,3 @@ def searchPLZByTown():
         listWithPLZ.append(elem)
     print listWithPLZ
 print searchPLZByTown()
-
-# TODO: Main Methode bzw. GUI zum ausführen der Befehle!
