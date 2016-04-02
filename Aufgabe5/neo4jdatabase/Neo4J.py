@@ -4,12 +4,12 @@ from neo4jrestclient.client import GraphDatabase
 
 neoDB = GraphDatabase("http://localhost:7474", username="neo4j", password="master")
 graph = Graph()
-modulList = []
-relationshipList = []
-nodeList = []
+nodes = []
+rels = []
+
 def readData():
     # with open("/home/nosql/Documents/WP-NoSQL-Big-Data/Doc/aimodules.graph", "r") as file:
-    with open("D:\GitHub\WP-NoSQL-Big-Data\Doc\\aimodules.graph", "r") as file:
+    with open("D:\Uni\WP-NoSQL-Big-Data\Doc\\aimodules.graph", "r") as file:
         lines = []
         for line in file:
             lines.append(line)
@@ -19,43 +19,31 @@ def createLabels():
     label = neoDB.labels.create("teeebu")
     return label
 
-def createNodes():
-    #TODO Vielleicht eine Klasse fuer Nodes, um die jeweiligen nodes speichern zu koennen um dann darauf zugreifen zu koennen
+def create_nodes():
     label = createLabels()
     for module in readData():
         data = json.loads(module)
 
         modulename = data['Modulname']
         relationship = data['Vorraussetzung']
-        node = Node("Module", modulename)
+        rels.append(relationship)
+        n = neoDB.nodes.create(name=modulename)
+        nodes.append(n)
 
-        nodeList.append(node)
-        # m = neoDB.nodes.create(name=modulename)
-        # label.add(node)
+    index_of_rels = 0
+    for n in nodes:
+        relationships = rels[index_of_rels]
+        print len(relationships)
+        index_for_relationships = 0
+        for node in nodes:
+            actual_node = node.properties.values().__getitem__(0)
+            if(relationships[index_for_relationships] == actual_node):
+                n.relationships.create("vorraussetzung", node)
+                # relationships.pop(index_for_relationships)
+                if(len(relationships) - 1 == index_for_relationships):
+                    break
+                else:
+                    index_for_relationships = index_for_relationships + 1
+        index_of_rels = index_of_rels + 1
 
-    for m in readData():
-        data = json.loads(m)
-        name = data['Modulname']
-        rel = data['Vorraussetzung']
-        print nodeList.__contains__(Node("Modulname", name))
-        print "HI"
-        for r in rel:
-            print r
-            x = nodeList.__getitem__(Node("Modulname", name))
-            y = nodeList.__getitem__(Node("Modulname", r))
-            Node.cast(x)
-            relationship = Relationship(x, "needs", y)
-            if(graph.__contains__(Node("Modulname", x))):
-                graph.create(y)
-                graph.create(relationship)
-                print "Y"
-            else:
-                graph.create(x)
-                graph.create(relationship)
-                print "X"
-
-
-    print nodeList.__contains__(Node("Module", "GI"))
-    print nodeList
-print  createNodes()
-
+print  create_nodes()
