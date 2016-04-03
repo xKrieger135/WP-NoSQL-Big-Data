@@ -3,7 +3,6 @@ from py2neo import neo4j, Graph, Path, Node, Relationship
 from neo4jrestclient.client import GraphDatabase
 
 neoDB = GraphDatabase("http://localhost:7474", username="neo4j", password="master")
-graph = Graph()
 nodes = []
 rels = []
 
@@ -15,12 +14,7 @@ def readData():
             lines.append(line)
     return lines
 
-def createLabels():
-    label = neoDB.labels.create("teeebu")
-    return label
-
 def create_nodes():
-    label = createLabels()
     for module in readData():
         data = json.loads(module)
 
@@ -39,11 +33,9 @@ def create_nodes():
             actual_node = node.properties.values().__getitem__(0)
             if(relationships[index_for_relationships] == actual_node):
                 n.relationships.create("vorraussetzung", node)
-                # relationships.pop(index_for_relationships)
                 if(len(relationships) - 1 == index_for_relationships):
                     break
                 else:
                     index_for_relationships = index_for_relationships + 1
         index_of_rels = index_of_rels + 1
-
 print  create_nodes()
