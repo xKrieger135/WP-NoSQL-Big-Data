@@ -1,0 +1,25 @@
+<!doctype html>
+<title>Database Entries</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<div class=page>
+  <h1>Database Entries</h1>
+    {% block body %}
+        <form action="{{ url_for('show_database_entries') }}" method=get class=get-entry>
+          <dl>
+            <dt>Title:
+            <dd><input type=text size=30 name=title>
+            <dt>Text:
+            <dd><textarea name=text rows=5 cols=40></textarea>
+            <dd><input type=submit value=Share>
+          </dl>
+        </form>
+      <ul class=entries>
+        {% for entry in entries %}
+          <li><h2>{{ entry }}</h2>{{ entry.text|safe }}
+        {% else %}
+          <li><em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+      </ul>
+    {% endblock %}
+</div>
+
