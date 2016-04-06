@@ -21,24 +21,20 @@ class redis_db:
             self.redis_connection.set(key, value)
             # rpush adds values to the same town
             self.redis_connection.rpush(value, key)
-    # print importDataToRedis()
 
     def searchTownByPLZ(self, plz):
         town = self.redis_connection.get(plz)
         return town
-    # print searchTownByPLZ()
 
-    def searchPLZByTown(self):
+    def searchPLZByTown(self, city):
         listWithPLZ = []
-        for elem in self.redis_connection.lrange("HAMBURG", 0, -1):
+        for elem in self.redis_connection.lrange(city, 0, -1):
             listWithPLZ.append(elem)
-        print listWithPLZ
-    # print searchPLZByTown()
+        return listWithPLZ
 
     def show_entries(self):
         z = self.redis_connection.keys()
         entries = [dict(ID=item) for item in z]
-        print entries
         return render_template('entries.html', entries=entries)
 
 app = Flask(__name__)
@@ -48,12 +44,20 @@ def show_database_entries():
     db = redis_db()
     return db.show_entries()
 
-# @app.route('/city')
-# def show_city():
-#     city = [dict(CITY=db.searchTownByPLZ(request.form['plz']))]
-#     # db.searchTownByPLZ(request.form['plz'])
-#     return render_template('entries.html', city=city)
+@app.route('/plz')
+def show_city():
+    db = redis_db()
+    plz = request.args['plz']
+    city = [dict(CITY=db.searchTownByPLZ(plz))]
+    print city
+    return render_template('entries.html', city=city)
 
+@app.route('/city')
+def show_plz():
+    db = redis_db()
+    city = request.args['city']
+    plz = [dict(PLZ=db.searchPLZByTown(city))]
+    return render_template("entries.html", plz=plz)
 
 if __name__ == "__main__":
     app.run(debug = True)
