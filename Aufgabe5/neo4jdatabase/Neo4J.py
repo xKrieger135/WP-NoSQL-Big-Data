@@ -27,15 +27,15 @@ def create_nodes():
     index_of_rels = 0
     for n in nodes:
         relationships = rels[index_of_rels]
-        print len(relationships)
         index_for_relationships = 0
-        for node in nodes:
-            actual_node = node.properties.values().__getitem__(0)
-            if(relationships[index_for_relationships] == actual_node):
-                n.relationships.create("vorraussetzung", node)
-                if(len(relationships) - 1 == index_for_relationships):
-                    break
-                else:
-                    index_for_relationships = index_for_relationships + 1
+        while (index_for_relationships !=  len(relationships) - 1):
+            for node in nodes:
+                actual_node = node.properties.values().__getitem__(0)
+                if(relationships[index_for_relationships] == actual_node):
+                    n.relationships.create("vorraussetzung", node)
+                    if(len(relationships) - 1 == index_for_relationships):
+                        break
+                    else:
+                        index_for_relationships = index_for_relationships + 1
         index_of_rels = index_of_rels + 1
 print  create_nodes()
