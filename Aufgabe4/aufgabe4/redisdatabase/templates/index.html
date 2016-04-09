@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="../src/style.css" type="text/css" rel="stylesheet" />
+    <script src="../src/jquery.min.js"></script>
+    <script src="../src/script.js"></script>
+    <title>Title</title>
+</head>
+<body>
+<div class="wrapper">
+    <div class="row">
+        <dl class="accordion">
+            <div class="acc-tab">
+                <dt class="closed">Key Value Database</dt>
+                <dd class="tab">
+                    <form action="{{ url_for('show_plz') }}" method="get" class="showplz">
+                            <p>City:<br /><br />
+                                <input placeholder="City" type="text" size="30" name="city" />
+                                <input type=submit value=Share />
+                            </p>
+                    </form>
+                    <form action="{{ url_for('show_plz') }}" method="get" class="showplz">
+                            <p>Postal Code:<br /><br />
+                                <input placeholder="Postal Code" type="text" size="30" name="postalcode" />
+                                <input type=submit value=Share />
+                            </p>
+                    </form>
+                </dd>
+            </div>
+
+            <div class="acc-tab">
+                <dt class="closed">Mongo Database</dt>
+                <dd class="tab">
+                    <p>hallo welt</p>
+                </dd>
+            </div>
+
+            <div class="acc-tab">
+                <dt class="closed">Wide Column Database</dt>
+                <dd class="tab">
+                    <p>hallo welt</p>
+                </dd>
+            </div>
+        </dl>
+    </div>
+    <div class="result-wrap">
+        <div class="single-item result"><!-- Each result as foreach -->
+            <ul>
+                <li>Test1</li>
+                <li>Test2</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".accordion dt").click(function () { // trigger test
+            $(this).next("dd").slideToggle("slow"); // blendet beim Klick auf "dt" die nächste "dd" ein.
+            $(this).toggleClass("closed open"); // wechselt beim Klick auf "dt" die Klasse des enthaltenen a-Tags von "closed" zu "open".
+        });
+    });</script>
+</body>
+</html>
