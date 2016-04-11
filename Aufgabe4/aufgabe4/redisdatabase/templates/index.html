@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href="../src/style.css" type="text/css" rel="stylesheet" />
-    <script src="../src/jquery.min.js"></script>
-    <script src="../src/script.js"></script>
+    <link href="../static/style.css" type="text/css" rel="stylesheet"/>
+    <script src="../templates/jquery.min.js"></script>
+    <script src="../templates/script.js"></script>
     <title>Title</title>
 </head>
 <body>
+{% block body %}
 <div class="wrapper">
     <div class="row">
         <dl class="accordion">
@@ -15,16 +16,16 @@
                 <dt class="closed">Key Value Database</dt>
                 <dd class="tab">
                     <form action="{{ url_for('show_plz') }}" method="get" class="showplz">
-                            <p>City:<br /><br />
-                                <input placeholder="City" type="text" size="30" name="city" />
-                                <input type=submit value=Share />
-                            </p>
+                        <p>City:<br/><br/>
+                            <input placeholder="City" type="text" size="30" name="city"/>
+                            <input type=submit value=Share/>
+                        </p>
                     </form>
-                    <form action="{{ url_for('show_plz') }}" method="get" class="showplz">
-                            <p>Postal Code:<br /><br />
-                                <input placeholder="Postal Code" type="text" size="30" name="postalcode" />
-                                <input type=submit value=Share />
-                            </p>
+                    <form action="{{ url_for('show_city') }}" method="get" class="showplz">
+                        <p>Postal Code:<br/><br/>
+                            <input placeholder="Postal Code" type="text" size="30" name="postalcode"/>
+                            <input type=submit value=Share/>
+                        </p>
                     </form>
                 </dd>
             </div>
@@ -47,12 +48,32 @@
     <div class="result-wrap">
         <div class="single-item result"><!-- Each result as foreach -->
             <ul>
-                <li>Test1</li>
-                <li>Test2</li>
+                <ul class=entries>
+                    {% for entry in entries %}
+                    <li><h2>{{ entry }}</h2>
+                    {% else %}
+                    <li><em>Unbelievable. No entries here so far</em>
+                    {% endfor %}
+                </ul>
+                <ul class=city>
+                    {% for entry in city %}
+                    <li><h2>{{ entry }}</h2>
+                    {% else %}
+                    <li><em>Unbelievable. No entries here so far</em>
+                    {% endfor %}
+                </ul>
+                <ul class=city>
+                    {% for entry in plz %}
+                    <li><h2>{{ entry }}</h2>
+                    {% else %}
+                    <li><em>Unbelievable. No entries here so far</em>
+                    {% endfor %}
+                </ul>
             </ul>
         </div>
     </div>
 </div>
+{% endblock %}
 <script type="text/javascript">
     $(document).ready(function () {
         $(".accordion dt").click(function () { // trigger test
