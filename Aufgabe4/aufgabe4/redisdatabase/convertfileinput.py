@@ -16,7 +16,9 @@ class redis_db:
     def importDataToRedis(self):
         for object in self.readData():
             data = json.loads(object)
-            key = data['_id']
+            key = data['_id'].encode("utf8")
+            print(data)
+            v = data
             value = data['city']
             self.redis_connection.set(key, value)
             # rpush adds values to the same town
@@ -35,7 +37,7 @@ class redis_db:
     def show_entries(self):
         z = self.redis_connection.keys()
         entries = [dict(ID=item) for item in z]
-        return render_template('entries.html', entries=entries)
+        return render_template('index.html', entries=entries)
 
 app = Flask(__name__)
 
@@ -49,15 +51,20 @@ def show_city():
     db = redis_db()
     plz = request.args['plz']
     city = [dict(CITY=db.searchTownByPLZ(plz))]
-    print city
-    return render_template('entries.html', city=city)
+    print(city)
+    return render_template('index.html', city=city)
 
 @app.route('/city')
 def show_plz():
     db = redis_db()
     city = request.args['city']
     plz = [dict(PLZ=db.searchPLZByTown(city))]
-    return render_template("entries.html", plz=plz)
+    return render_template("index.html", plz=plz)
+
+@app.route('/import')
+def import_data():
+    db = redis_db()
+    db.importDataToRedis()
 
 if __name__ == "__main__":
     app.run(debug = True)
