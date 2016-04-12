@@ -15,13 +15,13 @@
             <div class="acc-tab">
                 <dt class="closed">Key Value Database</dt>
                 <dd class="tab">
-                    <form action="{{ url_for('show_plz') }}" method="get" class="showplz">
+                    <form action="{{ url_for('show_postalcode') }}" method="get" class="showplz">
                         <p>City:<br/><br/>
                             <input placeholder="City" type="text" size="30" name="city"/>
                             <input type=submit value=Share/>
                         </p>
                     </form>
-                    <form action="{{ url_for('show_city') }}" method="get" class="showcity">
+                    <form action="{{ url_for('show_city_and_state') }}" method="get" class="showcity">
                         <p>Postal Code:<br/><br/>
                             <input placeholder="Postal Code" type="text" size="30" name="postalcode"/>
                             <input type=submit value=Share/>
@@ -62,8 +62,8 @@
                     <li><em>Unbelievable. No entries here so far</em>
                     {% endfor %}
                 </ul>
-                <ul class=plz>
-                    {% for entry in plz %}
+                <ul class=postalcode>
+                    {% for entry in postalcode %}
                     <li><h2>{{ entry }}</h2>
                     {% else %}
                     <li><em>Unbelievable. No entries here so far</em>
