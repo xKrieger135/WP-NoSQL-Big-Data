@@ -56,18 +56,31 @@
                     {% endfor %}
                 </ul>
                 <ul class=city>
-                    {% for entry in city %}
-                    <li><h2>{{ entry }}</h2>
-                    {% else %}
-                    <li><em>Unbelievable. No entries here so far</em>
-                    {% endfor %}
+                    <table style="width: 75%" border="true">
+
+                        {% for entry in city %}
+                        {% for k, v in entry.keys(), entry.values() %}
+                        <tr>
+                            <td> {{ k }}</td>
+                            <td> {{ v }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                    </table>
                 </ul>
                 <ul class=postalcode>
-                    {% for entry in postalcode %}
-                    <li><h2>{{ entry }}</h2>
-                    {% else %}
-                    <li><em>Unbelievable. No entries here so far</em>
-                    {% endfor %}
+                    <table style="width: 75%" border="true">
+                        <tr>
+                            <td> Postalcode</td>
+                        </tr>
+                        {% for entry in postalcode %}
+                        {% for k in entry.values() %}
+                        <tr>
+                            <td> {{ k }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                    </table>
                 </ul>
             </ul>
         </div>

@@ -24,6 +24,7 @@ class redis_db:
             # rpush adds values to the same town
             self.redis_connection.rpush(value, key)
 
+
     def searchTownByPLZ(self, plz):
         # TODO: Try to find another solution for decoding bytes from redis to the correct JSON object!
         redis_data = self.redis_connection.get(plz)
@@ -49,31 +50,43 @@ class redis_db:
         return render_template('index.html', entries=entries)
 
 app = Flask(__name__)
+db = redis_db()
 
 @app.route('/entries')
 def show_database_entries():
-    db = redis_db()
     return db.show_entries()
 
 @app.route('/postalcode')
 def show_city_and_state():
-    db = redis_db()
+    #db = redis_db()
     postalcode = request.args['postalcode']
-    city = [dict(CITY=db.searchTownByPLZ(postalcode))]
-    return render_template('index.html', city=city)
+    citys = dict()
+    city = db.searchTownByPLZ(postalcode)
+
+    citys.__setitem__("City", city[0])
+    citys.__setitem__("State", city[1])
+    city_with_state = [citys]#[dict(city=city)]
+    return render_template('index.html', city=city_with_state)
 
 @app.route('/city')
 def show_postalcode():
-    db = redis_db()
+    #db = redis_db()
     city = request.args['city']
-    postalcode = [dict(POSTALCODE=db.searchPLZByTown(city))]
+    postalcodes = []
+    pc = db.searchPLZByTown(city)
+    for code in pc:
+        decoded_pc = str(code, "utf-8")
+        postalcodes.append(decoded_pc)
+
+    postalcode = [dict(postalcode=postalcodes)]
+    print(postalcode)
     return render_template("index.html", postalcode=postalcode)
 
 @app.route('/import')
 def import_data():
-    db = redis_db()
+    #db = redis_db()
     db.importDataToRedis()
+    return render_template('index.html')
 
 if __name__ == "__main__":
     app.run(debug = True)
-
