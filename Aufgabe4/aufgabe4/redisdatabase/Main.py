@@ -17,7 +17,7 @@ def show_database_entries():
 def show_city_and_state():
     postalcode = request.args['postalcode']
     citys = dict()
-    city = db.searchTownByPLZ(postalcode)
+    city = db.search_city_by_postalcode(postalcode)
     citys.__setitem__("City", city[0])
     citys.__setitem__("State", city[1])
     city_with_state = [citys]
@@ -29,7 +29,7 @@ def show_postalcode():
     city = request.args['city']
     postalcodes = dict()
     list_with_postalcodes = []
-    pc = db.searchPLZByTown(city)
+    pc = db.search_postalcode_by_city(city)
     # First put the decoded elements into a list, after that put them into the dict
     for elem in pc:
         decoded_pc = str(elem, "utf-8")
@@ -41,7 +41,7 @@ def show_postalcode():
 
 @app.route('/import')
 def import_data():
-    db.importDataToRedis()
+    db.import_data_to_redis()
     return render_template('index.html')
 
 
