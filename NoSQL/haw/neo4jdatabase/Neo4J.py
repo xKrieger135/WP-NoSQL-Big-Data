@@ -38,4 +38,3 @@ def create_nodes():
                     else:
                         index_for_relationships = index_for_relationships + 1
         index_of_rels = index_of_rels + 1
-print  create_nodes()

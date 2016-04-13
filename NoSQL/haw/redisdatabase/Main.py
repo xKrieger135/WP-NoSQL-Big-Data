@@ -2,7 +2,7 @@ import json, redis
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash
 
-from aufgabe4.redisdatabase.Redis_db import Redis_db
+from haw.redisdatabase.Redis_db import Redis_db
 
 db = Redis_db()
 
