@@ -23,7 +23,6 @@ class Redis_db():
             self.redis_connection.set(key, data)
             self.redis_connection.rpush(value, key)
 
-
     def searchTownByPLZ(self, plz):
         # TODO: Try to find another solution for decoding bytes from redis to the correct JSON object!
         redis_data = self.redis_connection.get(plz)
