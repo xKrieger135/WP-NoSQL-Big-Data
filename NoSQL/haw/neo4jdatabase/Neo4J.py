@@ -7,8 +7,8 @@ nodes = []
 rels = []
 
 def readData():
-    # with open("/home/nosql/Documents/WP-NoSQL-Big-Data/Doc/aimodules.graph", "r") as file:
-    with open("D:\Uni\WP-NoSQL-Big-Data\Doc\\aimodules.graph", "r") as file:
+    with open("/home/nosql/Documents/WP-NoSQL-Big-Data/Doc/aimodules.graph", "r") as file:
+    # with open("D:\Uni\WP-NoSQL-Big-Data\Doc\\aimodules.graph", "r") as file:
         lines = []
         for line in file:
             lines.append(line)
@@ -30,7 +30,8 @@ def create_nodes():
         index_for_relationships = 0
         while (index_for_relationships !=  len(relationships) - 1):
             for node in nodes:
-                actual_node = node.properties.values().__getitem__(0)
+
+                actual_node = list(node.properties.values())[0]
                 if(relationships[index_for_relationships] == actual_node):
                     n.relationships.create("vorraussetzung", node)
                     if(len(relationships) - 1 == index_for_relationships):
@@ -38,3 +39,4 @@ def create_nodes():
                     else:
                         index_for_relationships = index_for_relationships + 1
         index_of_rels = index_of_rels + 1
+print(create_nodes())
