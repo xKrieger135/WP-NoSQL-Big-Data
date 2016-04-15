@@ -8,11 +8,29 @@ class Mongo_DB():
     mongodb_collection = None
 
     def read_data(self):
-        with open("/home/nosql/Downloads/plz.data", "r") as file:
+        # with open("/home/nosql/Downloads/plz.data", "r") as file:
+        with open("/home/nosql/Downloads/sinndeslebens.txt", "r") as file:
             lines = []
             for line in file:
                 lines.append(line)
+            self.get_import_data(lines)
         return lines
+
+    def get_import_data(self, data):
+        for insert_data in data:
+            test = "".join(insert_data)
+            i = 0
+            x = ""
+            while(i <= len(test) - 1):
+                if(test[i] == "{"):
+                    while(i != len(test) - 3):
+                        x += test[i]
+                        i = i + 1
+                i = i + 1
+            print(x)
+
+
+
 
     def import_data_to_mongodb(self):
         if(not "nosql" in self.database.collection_names()):
@@ -43,3 +61,5 @@ class Mongo_DB():
                 postalcode = elem['_id']
                 results.append(postalcode)
         return results
+mdb = Mongo_DB()
+mdb.read_data()
