@@ -15,13 +15,13 @@
             <div class="acc-tab">
                 <dt class="closed">Key Value Database</dt>
                 <dd class="tab">
-                    <form action="{{ url_for('show_postalcode') }}" method="get" class="showplz">
+                    <form action="{{ url_for('show_postalcode_with_redisdb') }}" method="get" class="showplz">
                         <p>City:<br/><br/>
                             <input placeholder="City" type="text" size="30" name="city"/>
                             <input type=submit value=Share/>
                         </p>
                     </form>
-                    <form action="{{ url_for('show_city_and_state') }}" method="get" class="showcity">
+                    <form action="{{ url_for('show_city_and_state_with_redisdb') }}" method="get" class="showcity">
                         <p>Postal Code:<br/><br/>
                             <input placeholder="Postal Code" type="text" size="30" name="postalcode"/>
                             <input type=submit value=Share/>
@@ -29,11 +29,21 @@
                     </form>
                 </dd>
             </div>
-
             <div class="acc-tab">
                 <dt class="closed">Mongo Database</dt>
                 <dd class="tab">
-                    <p>hallo welt</p>
+                    <form action="{{ url_for('show_postalcode_with_mongodb') }}" method="get" class="showplz">
+                        <p>City:<br/><br/>
+                            <input placeholder="City" type="text" size="30" name="city-mongodb"/>
+                            <input type=submit value=Share/>
+                        </p>
+                    </form>
+                    <form action="{{ url_for('show_city_and_state_with_mongodb') }}" method="get" class="showcity-mongodb">
+                        <p>Postal Code:<br/><br/>
+                            <input placeholder="Postal Code" type="text" size="30" name="postalcode-mongodb"/>
+                            <input type=submit value=Share/>
+                        </p>
+                    </form>
                 </dd>
             </div>
 

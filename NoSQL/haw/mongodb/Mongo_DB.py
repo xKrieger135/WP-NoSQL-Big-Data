@@ -23,31 +23,23 @@ class Mongo_DB():
             data = json.loads(elem)
             db_collection.insert(data)
 
-    def search_city_and_state_by_postalcode(self):
+    def search_city_and_state_by_postalcode(self, postalcode):
         results = []
         if("nosql" in self.database.collection_names()):
             db_collection = self.database.get_collection("nosql")
-
-            data = db_collection.find_one({'_id' : '06013'})
+            data = db_collection.find_one({'_id' : postalcode})
             city = data['city']
             state = data['state']
             results.append(city)
             results.append(state)
         return results
 
-    def search_postalcode_by_city(self):
+    def search_postalcode_by_city(self, city):
         results = []
-
-
         if("nosql" in self.database.collection_names()):
             db_collection = self.database.get_collection("nosql")
-            data = db_collection.find({'city' : 'HAMBURG'})
+            data = db_collection.find({'city' : city})
             for elem in data:
                 postalcode = elem['_id']
-                print(postalcode)
                 results.append(postalcode)
-                return results
-mdb = Mongo_DB()
-mdb.import_data_to_mongodb()
-mdb.search_city_and_state_by_postalcode()
-mdb.search_postalcode_by_city()
+        return results
