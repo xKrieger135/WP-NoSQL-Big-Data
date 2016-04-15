@@ -1,4 +1,4 @@
-import json
+import json, yaml, demjson, ast
 from pymongo import MongoClient
 
 class Mongo_DB():
@@ -13,33 +13,43 @@ class Mongo_DB():
             lines = []
             for line in file:
                 lines.append(line)
-            self.get_import_data(lines)
         return lines
 
     def get_import_data(self, data):
+        result = []
+        cleaned_data = ""
         for insert_data in data:
-            test = "".join(insert_data)
+            insert_data_as_string = "".join(insert_data)
             i = 0
-            x = ""
-            while(i <= len(test) - 1):
-                if(test[i] == "{"):
-                    while(i != len(test) - 3):
-                        x += test[i]
+            while(i <= len(insert_data_as_string) - 1):
+                if(insert_data_as_string[i] == "{"):
+                    while(i != len(insert_data_as_string) - 3):
+                        cleaned_data += insert_data_as_string[i]
                         i = i + 1
                 i = i + 1
-            print(x)
-
-
-
+            result.append(cleaned_data)
+        return result
 
     def import_data_to_mongodb(self):
         if(not "nosql" in self.database.collection_names()):
-            self.mongodb_collection = self.database.create_collection("nosql")
+            self.database.create_collection("nosql")
+        if(not "fussball" in self.database.collection_names()):
+            self.database.create_collection("fussball")
         self.database.drop_collection("nosql")
-        db_collection = self.database.get_collection("nosql")
-        for elem in self.read_data():
-            data = json.loads(elem)
-            db_collection.insert(data)
+        self.database.drop_collection("fussball")
+        postalcode_collection = self.database.get_collection("nosql")
+        fussball_collection = self.database.get_collection("fussball")
+
+        if(postalcode_collection.full_name == "nosql"):
+            for elem in self.read_data():
+                data = json.loads(elem)
+                postalcode_collection.insert(data)
+        if(fussball_collection.name == "fussball"):
+            for elem in self.get_import_data(self.read_data()):
+                # To have automatically read from file and insert its neccessary to pull every data as an extra elem!
+                # This is only for automation processes (read {...} from method from sinndeslebens.txt
+                data = {'fussball_data' : elem}
+                fussball_collection.insert(data)
 
     def search_city_and_state_by_postalcode(self, postalcode):
         results = []
@@ -61,5 +71,3 @@ class Mongo_DB():
                 postalcode = elem['_id']
                 results.append(postalcode)
         return results
-mdb = Mongo_DB()
-mdb.read_data()
