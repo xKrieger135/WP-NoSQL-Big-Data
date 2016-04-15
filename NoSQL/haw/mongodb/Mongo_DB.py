@@ -37,11 +37,16 @@ class Mongo_DB():
 
     def search_postalcode_by_city(self):
         results = []
+
+
         if("nosql" in self.database.collection_names()):
             db_collection = self.database.get_collection("nosql")
             data = db_collection.find({'city' : 'HAMBURG'})
-            print(data.count())
-
+            for elem in data:
+                postalcode = elem['_id']
+                print(postalcode)
+                results.append(postalcode)
+                return results
 mdb = Mongo_DB()
 mdb.import_data_to_mongodb()
 mdb.search_city_and_state_by_postalcode()
