@@ -17,8 +17,8 @@ class Mongo_DB():
 
     def get_import_data(self, data):
         result = []
-        cleaned_data = ""
         for insert_data in data:
+            cleaned_data = ""
             insert_data_as_string = "".join(insert_data)
             i = 0
             while(i <= len(insert_data_as_string) - 1):
@@ -45,9 +45,12 @@ class Mongo_DB():
                 data = json.loads(elem)
                 postalcode_collection.insert(data)
         if(fussball_collection.name == "fussball"):
-            for elem in self.get_import_data(self.read_data()):
+            insert_data = self.get_import_data(self.read_data())
+            print(insert_data)
+            for elem in insert_data:
                 # To have automatically read from file and insert its neccessary to pull every data as an extra elem!
                 # This is only for automation processes (read {...} from method from sinndeslebens.txt
+                print(elem)
                 data = {'fussball_data' : elem}
                 fussball_collection.insert(data)
 
@@ -71,3 +74,12 @@ class Mongo_DB():
                 postalcode = elem['_id']
                 results.append(postalcode)
         return results
+
+    def search_football_team_name(self):
+        if("fussball" in self.database.collection_names()):
+            fussball = self.database.get_collection("fussball")
+            data = fussball.find({'fusball_data' : {'name' : 'HSV'}})
+            print(data)
+db = Mongo_DB()
+db.import_data_to_mongodb()
+db.search_football_team_name()
