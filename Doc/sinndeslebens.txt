@@ -11,3 +11,32 @@ db.fussball.insert({name: 'Leverkusen', gruendung: new Date("1904", "8", "1"), f
 db.fussball.insert({name: 'Stuttgart', gruendung: new Date("1893", "9", "9"), farben: ['rot', 'weiss'], Tabellenplatz: 7, nike: 'n'});
 db.fussball.insert({name: 'Werder', gruendung: new Date("1899", "2", "4"), farben: ['gruen','weiss'], Tabellenplatz: 6, nike: 'j'});
 
+b) 
+	1) db.getCollection('fussball').find({name: 'Augsburg'})
+	
+	2) db.getCollection('fussball').find({nike: {$all: ['j']}, farben: {$all: ['schwarz']}})
+	
+	3) db.getCollection('fussball').find({nike: {$all: ['j']}, farben: {$all: ['weiss', 'gruen']}})
+
+	4) db.getCollection('fussball').find({nike: {$all: ['j']}, $or: [{farben: 'weiss'}, {farben: 'gruen'}]})
+
+	5) db.getCollection('fussball').find().sort({Tabellenplatz:-1}).limit(1)
+
+	6) db.getCollection('fussball').find({Tabellenplatz: {$lt: 17}})
+
+c) 	Suche alle Vereine Heraus mit unterdrückter _id, Tabellenplatz > 10, farben
+	db.getCollection('fussball').find({$and: [{Tabellenplatz: {$gt: 10}},{nike: {$all: ['n']}},{farben: {$all: ['rot']}}]})
+	db.getCollection('fussball').find({$and: [{Tabellenplatz: {$gt: 10}},{nike: {$all: ['n']}},{farben: 'rot'}]})
+
+d) 	Bei Ausführung des db.fussball.update({name: 'Augsburg'}, {Tabellenplatz: 1}) Statements
+	stehen als Eintrag für das vorige Augsburg nur noch der Tabellenplatz + 1. Der Grund hierfür ist, dass
+	nur zwei parameter angegeben wurden. Der zweite Parameter legt hirbei das Dokument fest, mit welchem das alte ersetzt
+	werden soll. Um eine richtige Änderung durchzuführen, kann man innerhalb des zweiten Parameters das $set angeben.
+
+	Wiederherstellen des Urzustandes:
+	db.fussball.update({Tabellenplatz: 1}, {name: 'Augsburg', gruendung: new Date("1907", "8", "8"), farben: ['rot', 'weiss'], Tabellenplatz: 12,  nike: 'j'})
+
+e) 	
+	1) db.fussball.update({name: 'Leverkusen'}, {$set: {Tabellenplatz: 2}})
+
+	2) 
