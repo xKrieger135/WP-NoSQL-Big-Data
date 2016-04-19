@@ -1,0 +1,71 @@
+import json, simplejson
+from pymongo import MongoClient
+from bson import Binary, Code
+from bson.json_util import dumps
+
+class Mongo_DB():
+
+    mongodb_client = MongoClient()
+    database = mongodb_client.get_database("nosql")
+    mongodb_collection = None
+
+    def read_data(self):
+        with open("/home/nosql/Downloads/plz.data", "r") as file:
+        # with open("/home/nosql/Documents/WP-NoSQL-Big-Data/Doc/sinndeslebens.txt", "r") as file:
+            lines = []
+            for line in file:
+                lines.append(line)
+        return lines
+
+    def import_data_to_mongodb(self, collection):
+        if(not "nosql" in self.database.collection_names()):
+            self.database.create_collection("nosql")
+        # if(not "fussball" in self.database.collection_names()):
+        #     self.database.create_collection("fussball")
+        self.database.drop_collection("nosql")
+        # self.database.drop_collection("fussball")
+        postalcode_collection = self.database.get_collection("nosql")
+        # fussball_collection = self.database.get_collection("fussball")
+
+        if(collection == "nosql"):
+            for elem in self.read_data():
+                data = json.loads(elem)
+                postalcode_collection.insert(data)
+        # if(collection == "fussball"):
+        #     i = 0
+        #     for elem in self.read_data():
+        #         converted = json.dumps(elem)
+        #         data = json.loads(converted)
+        #         ndata = json.loads(data)
+        #
+        #         fussball_collection.insert(a)
+
+    def search_city_and_state_by_postalcode(self, postalcode):
+        results = []
+        if("nosql" in self.database.collection_names()):
+            db_collection = self.database.get_collection("nosql")
+            data = db_collection.find_one({'_id' : postalcode})
+            city = data['city']
+            state = data['state']
+            results.append(city)
+            results.append(state)
+        return results
+
+    def search_postalcode_by_city(self, city):
+        results = []
+        if("nosql" in self.database.collection_names()):
+            db_collection = self.database.get_collection("nosql")
+            data = db_collection.find({'city' : city})
+            for elem in data:
+                postalcode = elem['_id']
+                results.append(postalcode)
+        return results
+
+    # def search_football_team_name(self):
+    #     if("fussball" in self.database.collection_names()):
+    #         fussball = self.database.get_collection("fussball")
+    #         data = fussball.find()
+    #         print(data)
+# db = Mongo_DB()
+# db.import_data_to_mongodb("fussball")
+# db.search_football_team_name()
