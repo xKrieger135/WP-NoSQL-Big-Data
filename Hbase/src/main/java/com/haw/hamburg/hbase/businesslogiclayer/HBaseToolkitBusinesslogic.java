@@ -11,14 +11,17 @@ import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Put;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by nosql on 4/22/16.
@@ -34,15 +37,20 @@ public class HBaseToolkitBusinesslogic {
         this.hBaseCityDAO = new HBaseCityDAO();
     }
 
-    public void insert(List<JSONObject> importData, String tableName, String columnFamilyName) throws IOException {
+    public void insert(List<JSONObject> importData, String tableName, String columnFamilyName) throws IOException, JSONException {
         admin = new HBaseAdmin(hbaseConfig);
-        HTableDescriptor table = createTable(hbaseConfig, tableName, columnFamilyName);
+        createTable(hbaseConfig, tableName, columnFamilyName);
         for (JSONObject element : importData) {
+            Map<Double, Double> locationCoordinates = new HashMap<>();
+            JSONArray coordinates = element.getJSONArray("loc");
+            locationCoordinates.put(coordinates.getDouble(0), coordinates.getDouble(1));
 
+            City city = new City(element.getInt("_id"), element.getString("city"), locationCoordinates, element.getInt("pop"), element.getString("state"));
+            hBaseCityDAO.dataImport(hbaseConfig, city, tableName);
         }
     }
 
-    private HTableDescriptor createTable(Configuration config, String tableName, String columnFamilyName) throws IOException {
+    private void createTable(Configuration config, String tableName, String columnFamilyName) throws IOException {
         HTableDescriptor table = null;
         if(config != null && !(tableName.isEmpty())) {
             table = new HTableDescriptor(TableName.valueOf(tableName));
@@ -52,11 +60,15 @@ public class HBaseToolkitBusinesslogic {
                 closeConnection();
             }
         }
-        return table;
     }
 
     private void addColumnFamily(HTableDescriptor table, String columnFamilyName) {
         table.addFamily(new HColumnDescriptor(columnFamilyName));
+    }
+
+    private Connection getServerConnection() throws IOException {
+        Connection connection = ConnectionFactory.createConnection(hbaseConfig);
+        return connection;
     }
 
     private void closeConnection() {
@@ -75,7 +87,7 @@ public class HBaseToolkitBusinesslogic {
         List<JSONObject> j = null;
         System.out.println("OK");
         try {
-            l = f.readFile("/home/nosql/Documents/WP-NoSQL-Big-Data/Doc/aimodules.graph");
+            l = f.readFile("/home/nosql/Documents/WP-NoSQL-Big-Data/Doc/plz.data");
             j = json.convertToJSONList(l);
             System.out.println("OK AGAIN");
         } catch (IOException e) {
@@ -86,6 +98,8 @@ public class HBaseToolkitBusinesslogic {
         try {
             x.insert(j, "abcabc", "bcabca");
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
