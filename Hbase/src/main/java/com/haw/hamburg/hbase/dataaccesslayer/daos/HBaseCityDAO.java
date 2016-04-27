@@ -9,12 +9,8 @@ import org.apache.hadoop.hbase.client.HBaseAdmin;
  */
 public class HBaseCityDAO {
 
-    private HBaseAdmin hBaseAdmin = null;
-    private Configuration configuration = null;
+    public HBaseCityDAO() {
 
-    public HBaseCityDAO(HBaseAdmin hBaseAdmin, Configuration configuration) {
-        this.hBaseAdmin = hBaseAdmin;
-        this.configuration = configuration;
     }
 
     private void dataImport() {
