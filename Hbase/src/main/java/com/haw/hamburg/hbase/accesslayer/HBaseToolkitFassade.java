@@ -20,7 +20,7 @@ public class HBaseToolkitFassade {
 
     public void insert() {
         if(importData != null) {
-//            hBaseToolkitBusinesslogic.insert(importData);
+//            hBaseToolkitBusinesslogic.databaseImport(importData);
         }
     }
 }

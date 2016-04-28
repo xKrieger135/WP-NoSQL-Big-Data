@@ -11,14 +11,15 @@ import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,6 @@ import java.util.Map;
 public class HBaseToolkitBusinesslogic {
 
     private Configuration hbaseConfig = null;
-    private HBaseAdmin admin = null;
     private HBaseCityDAO hBaseCityDAO = null;
 
     public HBaseToolkitBusinesslogic() {
@@ -37,27 +37,32 @@ public class HBaseToolkitBusinesslogic {
         this.hBaseCityDAO = new HBaseCityDAO();
     }
 
-    public void insert(List<JSONObject> importData, String tableName, String columnFamilyName) throws IOException, JSONException {
-        admin = new HBaseAdmin(hbaseConfig);
+    public void databaseImport(List<JSONObject> importData, String tableName, String columnFamilyName) throws IOException, JSONException {
         createTable(hbaseConfig, tableName, columnFamilyName);
+        Connection connection = getServerConnection();
+        List<City> cities = new ArrayList<>();
         for (JSONObject element : importData) {
             Map<Double, Double> locationCoordinates = new HashMap<>();
             JSONArray coordinates = element.getJSONArray("loc");
             locationCoordinates.put(coordinates.getDouble(0), coordinates.getDouble(1));
 
             City city = new City(element.getInt("_id"), element.getString("city"), locationCoordinates, element.getInt("pop"), element.getString("state"));
-            hBaseCityDAO.dataImport(hbaseConfig, city, tableName);
+            cities.add(city);
         }
+        hBaseCityDAO.databaseImport(cities, connection, tableName);
     }
 
     private void createTable(Configuration config, String tableName, String columnFamilyName) throws IOException {
+        Connection connection = getServerConnection();
+        TableName tName = TableName.valueOf(tableName);
+        Admin admin = connection.getAdmin();
         HTableDescriptor table = null;
         if(config != null && !(tableName.isEmpty())) {
-            table = new HTableDescriptor(TableName.valueOf(tableName));
+            table = new HTableDescriptor(tName);
             addColumnFamily(table, columnFamilyName);
-            if(!admin.tableExists(tableName)) {
+            if(!admin.tableExists(tName)) {
                 admin.createTable(table);
-                closeConnection();
+                closeConnection(connection);
             }
         }
     }
@@ -71,9 +76,9 @@ public class HBaseToolkitBusinesslogic {
         return connection;
     }
 
-    private void closeConnection() {
+    private void closeConnection(Connection connection) {
         try {
-            admin.close();
+            connection.getAdmin().close();
         } catch (IOException e) {
             throw new RuntimeException("While closing the connection went something wrong!", e);
         }
@@ -96,7 +101,7 @@ public class HBaseToolkitBusinesslogic {
             e.printStackTrace();
         }
         try {
-            x.insert(j, "abcabc", "bcabca");
+            x.databaseImport(j, "abcabc", "bcabca");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
