@@ -1,8 +1,10 @@
 package com.haw.hamburg.hbase.accesslayer;
 
 import com.haw.hamburg.hbase.businesslogiclayer.HBaseToolkitBusinesslogic;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -18,9 +20,9 @@ public class HBaseToolkitFassade {
         this.importData = importData;
     }
 
-    public void insert() {
-        if(importData != null) {
-//            hBaseToolkitBusinesslogic.databaseImport(importData);
+    public void databaseImport(String tableName, String columnFamilyName) throws IOException, JSONException {
+        if(importData != null && !(tableName.equals("")) && columnFamilyName.equals("")) {
+            hBaseToolkitBusinesslogic.databaseImport(importData, tableName, columnFamilyName);
         }
     }
 }

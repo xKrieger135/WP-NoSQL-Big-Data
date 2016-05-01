@@ -32,6 +32,12 @@ public class HBaseToolkitBusinesslogic {
     private Configuration hbaseConfig = null;
     private HBaseCityDAO hBaseCityDAO = null;
 
+    private final String ZIP = "_id";
+    private final String CITY = "city";
+    private final String POPULATION = "pop";
+    private final String LOCATION = "loc";
+    private final String STATE = "state";
+
     public HBaseToolkitBusinesslogic() {
         this.hbaseConfig = HBaseConfiguration.create();
         this.hBaseCityDAO = new HBaseCityDAO();
@@ -43,13 +49,21 @@ public class HBaseToolkitBusinesslogic {
         List<City> cities = new ArrayList<>();
         for (JSONObject element : importData) {
             Map<Double, Double> locationCoordinates = new HashMap<>();
-            JSONArray coordinates = element.getJSONArray("loc");
+            JSONArray coordinates = element.getJSONArray(LOCATION);
             locationCoordinates.put(coordinates.getDouble(0), coordinates.getDouble(1));
 
-            City city = new City(element.getInt("_id"), element.getString("city"), locationCoordinates, element.getInt("pop"), element.getString("state"));
+            City city = new City(element.getInt(ZIP), element.getString(CITY), locationCoordinates, element.getInt(POPULATION), element.getString(STATE));
             cities.add(city);
         }
-        hBaseCityDAO.databaseImport(cities, connection, tableName);
+        hBaseCityDAO.databaseImport(cities, connection, tableName, columnFamilyName);
+        closeConnection(connection);
+    }
+
+    public City getCityNameByPostalcode(String tableName, String columnFamilyName, int postalcode) throws IOException {
+        Connection connection = getServerConnection();
+        City city = hBaseCityDAO.getCityNameByPostalcode(connection, tableName, columnFamilyName, postalcode);
+        City c2 = hBaseCityDAO.getPostalcodeByCityName(connection, tableName, columnFamilyName, "HAMBURG");
+        return city;
     }
 
     private void createTable(Configuration config, String tableName, String columnFamilyName) throws IOException {
@@ -101,7 +115,8 @@ public class HBaseToolkitBusinesslogic {
             e.printStackTrace();
         }
         try {
-            x.databaseImport(j, "abcabc", "bcabca");
+            x.databaseImport(j, "BigData", "CityData");
+            x.getCityNameByPostalcode("BigData", "CityData", 99950);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
