@@ -116,29 +116,29 @@ public class HBaseToolkitBusinesslogic {
         }
     }
 
-    public static void main(String[] args) {
-        HBaseToolkitBusinesslogic x = new HBaseToolkitBusinesslogic();
-        IFileReaderAdapter f = new FileReaderAdapter();
-        IJSONConverterAdapter json = new JSONConverterAdapter();
-        List<String> l = null;
-        List<JSONObject> j = null;
-        System.out.println("OK");
-        try {
-            l = f.readFile("/home/nosql/Documents/WP-NoSQL-Big-Data/Doc/plz.data");
-            j = json.convertToJSONList(l);
-            System.out.println("OK AGAIN");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        try {
-            x.databaseImport(j, "BigData", "CityData");
-            x.getCityNameByPostalcode("BigData", "CityData", "99950");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] args) {
+//        HBaseToolkitBusinesslogic x = new HBaseToolkitBusinesslogic();
+//        IFileReaderAdapter f = new FileReaderAdapter();
+//        IJSONConverterAdapter json = new JSONConverterAdapter();
+//        List<String> l = null;
+//        List<JSONObject> j = null;
+//        System.out.println("OK");
+//        try {
+//            l = f.readFile("/home/nosql/Documents/WP-NoSQL-Big-Data/Doc/plz.data");
+//            j = json.convertToJSONList(l);
+//            System.out.println("OK AGAIN");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            x.databaseImport(j, "BigData", "CityData");
+//            x.getCityNameByPostalcode("BigData", "CityData", "99950");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
