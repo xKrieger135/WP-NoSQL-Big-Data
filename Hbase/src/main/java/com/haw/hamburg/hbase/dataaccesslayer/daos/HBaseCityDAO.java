@@ -1,14 +1,15 @@
 package com.haw.hamburg.hbase.dataaccesslayer.daos;
 
 import com.haw.hamburg.hbase.dataaccesslayer.entities.City;
+import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
-import org.apache.hadoop.hbase.filter.CompareFilter;
-import org.apache.hadoop.hbase.filter.Filter;
-import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
+import org.apache.hadoop.hbase.filter.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,6 @@ public class HBaseCityDAO {
         TableName tName = TableName.valueOf(tableName);
         Table hTable = connection.getTable(tName);
         for (City c :cities) {
-//            System.out.println(c.getId());
             Put hbase = new Put(Bytes.toBytes(c.getId()));
             hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes("City"), Bytes.toBytes(c.getName()));
 
@@ -42,7 +42,7 @@ public class HBaseCityDAO {
         }
     }
 
-    public City getCityNameByPostalcode(Connection connection, String tableName, String columnFamilyName, int postalcode) throws IOException {
+    public City getCityNameByPostalcode(Connection connection, String tableName, String columnFamilyName, String postalcode) throws IOException {
         TableName tName = TableName.valueOf(tableName);
         Table hTable = connection.getTable(tName);
 
@@ -72,17 +72,24 @@ public class HBaseCityDAO {
         return city;
     }
 
-    public City getPostalcodeByCityName(Connection connection, String tableName, String columnFamilyName, String cityName) throws IOException {
+    public List<City> getPostalcodeByCityName(Connection connection, String tableName, String columnFamilyName, String cityName) throws IOException {
         TableName tName = TableName.valueOf(tableName);
         Table hTable = connection.getTable(tName);
 
-        Filter filter = new SingleColumnValueFilter(Bytes.toBytes(columnFamilyName),
-                Bytes.toBytes("City"), CompareFilter.CompareOp.EQUAL, Bytes.toBytes("HAMBURG"));
+        Filter filter = new SingleColumnValueFilter(Bytes.toBytes(tableName), Bytes.toBytes("City"), CompareFilter.CompareOp.EQUAL, Bytes.toBytes(cityName));
         Scan scan = new Scan();
         scan.setFilter(filter);
         ResultScanner rs = hTable.getScanner(scan);
+        List<City> cities = new ArrayList<>();
         for(Result result : rs) {
-            System.out.println(Bytes.toInt(result.getRow()));
+            // TODO: Get values to put them into the city objects!
+            String id = Bytes.toString(result.getRow());
+            String name = Bytes.toString(result.value());
+            String state = Bytes.toString(result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes("State")));
+            System.out.println(id);
+            System.out.println(name);
+            System.out.println();
+//            System.out.println(state);
         }
         return null;
     }

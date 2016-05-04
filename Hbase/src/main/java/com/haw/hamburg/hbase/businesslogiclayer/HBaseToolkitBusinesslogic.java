@@ -52,17 +52,17 @@ public class HBaseToolkitBusinesslogic {
             JSONArray coordinates = element.getJSONArray(LOCATION);
             locationCoordinates.put(coordinates.getDouble(0), coordinates.getDouble(1));
 
-            City city = new City(element.getInt(ZIP), element.getString(CITY), locationCoordinates, element.getInt(POPULATION), element.getString(STATE));
+            City city = new City(element.getString(ZIP), element.getString(CITY), locationCoordinates, element.getInt(POPULATION), element.getString(STATE));
             cities.add(city);
         }
         hBaseCityDAO.databaseImport(cities, connection, tableName, columnFamilyName);
         closeConnection(connection);
     }
 
-    public City getCityNameByPostalcode(String tableName, String columnFamilyName, int postalcode) throws IOException {
+    public City getCityNameByPostalcode(String tableName, String columnFamilyName, String postalcode) throws IOException {
         Connection connection = getServerConnection();
         City city = hBaseCityDAO.getCityNameByPostalcode(connection, tableName, columnFamilyName, postalcode);
-        City c2 = hBaseCityDAO.getPostalcodeByCityName(connection, tableName, columnFamilyName, "HAMBURG");
+        List<City> c2 = hBaseCityDAO.getPostalcodeByCityName(connection, tableName, columnFamilyName, "HAMBURG");
         return city;
     }
 
@@ -116,7 +116,7 @@ public class HBaseToolkitBusinesslogic {
         }
         try {
             x.databaseImport(j, "BigData", "CityData");
-            x.getCityNameByPostalcode("BigData", "CityData", 99950);
+            x.getCityNameByPostalcode("BigData", "CityData", "99950");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
