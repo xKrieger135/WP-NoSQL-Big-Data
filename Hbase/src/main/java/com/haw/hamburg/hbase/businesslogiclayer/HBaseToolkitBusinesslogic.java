@@ -62,8 +62,17 @@ public class HBaseToolkitBusinesslogic {
     public City getCityNameByPostalcode(String tableName, String columnFamilyName, String postalcode) throws IOException {
         Connection connection = getServerConnection();
         City city = hBaseCityDAO.getCityNameByPostalcode(connection, tableName, columnFamilyName, postalcode);
-        List<City> c2 = hBaseCityDAO.getPostalcodeByCityName(connection, tableName, columnFamilyName, "HAMBURG");
         return city;
+    }
+
+    public List<String> getPostalcodeByCityName(String tableName, String columnFamilyName, String cityName) throws IOException {
+        Connection connection = getServerConnection();
+        List<City> cities = hBaseCityDAO.getPostalcodeByCityName(connection, tableName, columnFamilyName, cityName);
+        List<String> postalcodes = new ArrayList<>();
+        for(City city : cities) {
+            postalcodes.add(city.getId());
+        }
+        return postalcodes;
     }
 
     private void createTable(Configuration config, String tableName, String columnFamilyName) throws IOException {

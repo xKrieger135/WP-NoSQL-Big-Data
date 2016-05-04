@@ -19,10 +19,21 @@ import java.util.Map;
  */
 public class HBaseCityDAO {
 
+    private final String CITY = "City";
+
     public HBaseCityDAO() {
 
     }
 
+    /**
+     * This method imports data into the HBase DB.
+     *
+     * @param cities              The cities, which should be imported into the database.
+     * @param connection          This is the connection, to get access to the HBase database.
+     * @param tableName           This is the tableName, where this data should be imported.
+     * @param columnFamilyName    This is the columnFamily, at the given tableName, where data should be imported.
+     * @throws IOException        This Exception will be thrown, when something went wrong, while importing the data.
+     */
     public void databaseImport(List<City> cities, Connection connection, String tableName, String columnFamilyName) throws IOException {
         TableName tName = TableName.valueOf(tableName);
         Table hTable = connection.getTable(tName);
@@ -42,6 +53,16 @@ public class HBaseCityDAO {
         }
     }
 
+    /**
+     * This method gets one city, for the given postalcode and will return all of the city data.
+     *
+     * @param connection         This is the connection, to get access to the HBase database.
+     * @param tableName          This is the tableName, where this data should be imported.
+     * @param columnFamilyName   This is the columnFamily, at the given tableName, where data should be imported.
+     * @param postalcode         This is the given postalcode, for which the city will be searched.
+     * @return                   Returns the entire city for the given postalcode of the city.
+     * @throws IOException       This Exception will be thrown, when something went wrong, while importing the data.
+     */
     public City getCityNameByPostalcode(Connection connection, String tableName, String columnFamilyName, String postalcode) throws IOException {
         TableName tName = TableName.valueOf(tableName);
         Table hTable = connection.getTable(tName);
@@ -72,25 +93,32 @@ public class HBaseCityDAO {
         return city;
     }
 
+    /**
+     * This method gets all postalcodes for one given city.
+     *
+     * @param connection         This is the connection, to get access to the HBase database.
+     * @param tableName          This is the tableName, where this data should be imported.
+     * @param columnFamilyName   This is the columnFamily, at the given tableName, where data should be imported.
+     * @param cityName           This is the given city, for which the postalcodes will be searched.
+     * @return                   Returns a list with all city data. The result is stored into a list, because of the
+     *                           possibility of multiple postalcodes for one city.
+     * @throws IOException       This Exception will be thrown, when something went wrong, while importing the data.
+     */
     public List<City> getPostalcodeByCityName(Connection connection, String tableName, String columnFamilyName, String cityName) throws IOException {
         TableName tName = TableName.valueOf(tableName);
         Table hTable = connection.getTable(tName);
 
-        Filter filter = new SingleColumnValueFilter(Bytes.toBytes(tableName), Bytes.toBytes("City"), CompareFilter.CompareOp.EQUAL, Bytes.toBytes(cityName));
+        Filter f = new SingleColumnValueFilter(Bytes.toBytes(columnFamilyName),
+                                Bytes.toBytes(CITY), CompareFilter.CompareOp.EQUAL, Bytes.toBytes(cityName));
         Scan scan = new Scan();
-        scan.setFilter(filter);
+        scan.setFilter(f);
         ResultScanner rs = hTable.getScanner(scan);
         List<City> cities = new ArrayList<>();
         for(Result result : rs) {
-            // TODO: Get values to put them into the city objects!
             String id = Bytes.toString(result.getRow());
-            String name = Bytes.toString(result.value());
-            String state = Bytes.toString(result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes("State")));
-            System.out.println(id);
-            System.out.println(name);
-            System.out.println();
-//            System.out.println(state);
+            City city = getCityNameByPostalcode(connection, tableName, columnFamilyName, id);
+            cities.add(city);
         }
-        return null;
+        return cities;
     }
 }
