@@ -20,6 +20,9 @@ import java.util.Map;
 public class HBaseCityDAO {
 
     private final String CITY = "City";
+    private final String LOCATION = "Location";
+    private final String POPULATION = "Population";
+    private final String STATE = "State";
 
     public HBaseCityDAO() {
 
@@ -39,16 +42,16 @@ public class HBaseCityDAO {
         Table hTable = connection.getTable(tName);
         for (City c :cities) {
             Put hbase = new Put(Bytes.toBytes(c.getId()));
-            hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes("City"), Bytes.toBytes(c.getName()));
+            hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes(CITY), Bytes.toBytes(c.getName()));
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
             objectOutputStream.writeObject(c.getLocation());
             byte[] locationCoordinates = byteArrayOutputStream.toByteArray();
 
-            hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes("Location"), locationCoordinates);
-            hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes("Population"), Bytes.toBytes(c.getName()));
-            hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes("State"), Bytes.toBytes(c.getName()));
+            hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes(LOCATION), locationCoordinates);
+            hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes(POPULATION), Bytes.toBytes(c.getName()));
+            hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes(STATE), Bytes.toBytes(c.getName()));
             hTable.put(hbase);
         }
     }
@@ -70,10 +73,10 @@ public class HBaseCityDAO {
         Get get = new Get(Bytes.toBytes(postalcode));
         Result result = hTable.get(get);
 
-        byte[] cityBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes("City"));
-        byte[] populationBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes("Population"));
-        byte[] stateBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes("State"));
-        byte[] locationBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes("Location"));
+        byte[] cityBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes(CITY));
+        byte[] populationBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes(POPULATION));
+        byte[] stateBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes(STATE));
+        byte[] locationBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes(LOCATION));
 
         String cityName = Bytes.toString(cityBytes);
         String state = Bytes.toString(stateBytes);

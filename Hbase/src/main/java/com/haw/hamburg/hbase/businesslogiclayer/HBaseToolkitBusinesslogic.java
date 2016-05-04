@@ -94,11 +94,20 @@ public class HBaseToolkitBusinesslogic {
         table.addFamily(new HColumnDescriptor(columnFamilyName));
     }
 
+    /**
+     * This method will get the HBase connection.
+     * @return                Returns the HBase connection as connection object.
+     * @throws IOException    This exception will be thrown, when something went wrong while creating the connection.
+     */
     private Connection getServerConnection() throws IOException {
         Connection connection = ConnectionFactory.createConnection(hbaseConfig);
         return connection;
     }
 
+    /**
+     * This method will close the connection to HBase.
+     * @param connection    This is the connection, to get access to HBase.
+     */
     private void closeConnection(Connection connection) {
         try {
             connection.getAdmin().close();

@@ -25,6 +25,7 @@ public class FileReaderAdapter implements IFileReaderAdapter {
         fileInput = new ArrayList<>();
     }
 
+    @Override
     public List<String> readFile(String file) throws IOException {
         Stream<String> fileInputStream = Files.lines(Paths.get(file));
         fileInputStream.forEach(elem -> fileInput.add(elem));
