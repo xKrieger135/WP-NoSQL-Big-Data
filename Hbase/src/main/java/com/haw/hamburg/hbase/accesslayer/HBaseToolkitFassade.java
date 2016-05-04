@@ -48,4 +48,10 @@ public class HBaseToolkitFassade {
         JSONObject postalcodesAsJson = new JSONObject(postalcodes);
         return postalcodesAsJson;
     }
+
+    public void createTable(String table, String columnFamily) throws IOException {
+        if(!(table.isEmpty())) {
+            hBaseToolkitBusinesslogic.createTable(table, columnFamily);
+        }
+    }
 }

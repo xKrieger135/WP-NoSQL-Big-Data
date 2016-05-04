@@ -14,6 +14,7 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.client.Table;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -43,9 +44,13 @@ public class HBaseToolkitBusinesslogic {
         this.hBaseCityDAO = new HBaseCityDAO();
     }
 
-    public void databaseImport(List<JSONObject> importData, String tableName, String columnFamilyName) throws IOException, JSONException {
-        createTable(hbaseConfig, tableName, columnFamilyName);
+    public void databaseImport(List<JSONObject> importData, String table, String columnFamilyName) throws IOException, JSONException {
         Connection connection = getServerConnection();
+
+        if(!(connection.getAdmin().tableExists(TableName.valueOf(table)))) {
+            createTable(table, columnFamilyName);
+        }
+
         List<City> cities = new ArrayList<>();
         for (JSONObject element : importData) {
             Map<Double, Double> locationCoordinates = new HashMap<>();
@@ -55,19 +60,19 @@ public class HBaseToolkitBusinesslogic {
             City city = new City(element.getString(ZIP), element.getString(CITY), locationCoordinates, element.getInt(POPULATION), element.getString(STATE));
             cities.add(city);
         }
-        hBaseCityDAO.databaseImport(cities, connection, tableName, columnFamilyName);
+        hBaseCityDAO.databaseImport(cities, connection, table, columnFamilyName);
         closeConnection(connection);
     }
 
-    public City getCityNameByPostalcode(String tableName, String columnFamilyName, String postalcode) throws IOException {
+    public City getCityNameByPostalcode(String table, String columnFamilyName, String postalcode) throws IOException {
         Connection connection = getServerConnection();
-        City city = hBaseCityDAO.getCityNameByPostalcode(connection, tableName, columnFamilyName, postalcode);
+        City city = hBaseCityDAO.getCityNameByPostalcode(connection, table, columnFamilyName, postalcode);
         return city;
     }
 
-    public List<String> getPostalcodeByCityName(String tableName, String columnFamilyName, String cityName) throws IOException {
+    public List<String> getPostalcodeByCityName(String table, String columnFamilyName, String cityName) throws IOException {
         Connection connection = getServerConnection();
-        List<City> cities = hBaseCityDAO.getPostalcodeByCityName(connection, tableName, columnFamilyName, cityName);
+        List<City> cities = hBaseCityDAO.getPostalcodeByCityName(connection, table, columnFamilyName, cityName);
         List<String> postalcodes = new ArrayList<>();
         for(City city : cities) {
             postalcodes.add(city.getId());
@@ -75,27 +80,56 @@ public class HBaseToolkitBusinesslogic {
         return postalcodes;
     }
 
-    private void createTable(Configuration config, String tableName, String columnFamilyName) throws IOException {
+    /**
+     * This method creates one HBaseTable. For HBase Tables there must be at least one column family for creation.
+     *
+     * @param tableName
+     * @param columnFamily
+     * @throws IOException
+     */
+    public void createTable(String tableName, String columnFamily) throws IOException {
         Connection connection = getServerConnection();
         TableName tName = TableName.valueOf(tableName);
         Admin admin = connection.getAdmin();
-        HTableDescriptor table = null;
-        if(config != null && !(tableName.isEmpty())) {
-            table = new HTableDescriptor(tName);
-            addColumnFamily(table, columnFamilyName);
+        HTableDescriptor hTable = new HTableDescriptor(tName);
             if(!admin.tableExists(tName)) {
-                admin.createTable(table);
+                addColumnFamily(hTable, columnFamily);
+                admin.createTable(hTable);
                 closeConnection(connection);
             }
-        }
     }
 
-    private void addColumnFamily(HTableDescriptor table, String columnFamilyName) {
-        table.addFamily(new HColumnDescriptor(columnFamilyName));
+    /**
+     * This method will add a columnFamily to the given HBaseTable. Please notice, that this method is only to use,
+     * while table creation, because tables need at least one column family.
+     *
+     * @param hTable
+     * @param columnFamily
+     */
+    private void addColumnFamily(HTableDescriptor hTable, String columnFamily) {
+        hTable.addFamily(new HColumnDescriptor(columnFamily));
+    }
+
+    /**
+     * This method will add column families to an existing table.
+     *
+     * @param table
+     * @param columnFamilyName
+     * @throws IOException
+     */
+    public void addColumnFamily(String table, String columnFamilyName) throws IOException {
+        Connection connection = getServerConnection();
+        TableName tName = TableName.valueOf(table);
+        Admin admin = connection.getAdmin();
+        if (admin.tableExists(tName)) {
+            admin.addColumn(tName, new HColumnDescriptor(columnFamilyName));
+            closeConnection(connection);
+        }
     }
 
     /**
      * This method will get the HBase connection.
+     *
      * @return                Returns the HBase connection as connection object.
      * @throws IOException    This exception will be thrown, when something went wrong while creating the connection.
      */
@@ -106,6 +140,7 @@ public class HBaseToolkitBusinesslogic {
 
     /**
      * This method will close the connection to HBase.
+     *
      * @param connection    This is the connection, to get access to HBase.
      */
     private void closeConnection(Connection connection) {
