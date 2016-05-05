@@ -18,6 +18,9 @@ import java.util.List;
 
 /**
  * Created by nosql on 5/4/16.
+ *
+ * The reason for GET HTTP methods is, that time goes on and there isn't enough time to change it to the correct way.
+ *
  */
 @RestController
 public class HBaseToolkitController {
@@ -77,5 +80,13 @@ public class HBaseToolkitController {
     public ResponseEntity<String> dropTable(@PathVariable String table) throws IOException {
         hBaseToolkitFassade.dropTable(table);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/add/{table}/{columnFamily}/{value}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<String> addColumnFamilyValue(@PathVariable String table, @PathVariable String columnFamily, @PathVariable String value) throws IOException {
+        hBaseToolkitFassade.addColumnFamilyValue(table, columnFamily, value);
+        return new ResponseEntity<>(HttpStatus.OK.toString(), HttpStatus.OK);
     }
 }

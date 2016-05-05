@@ -50,8 +50,8 @@ public class HBaseCityDAO {
             byte[] locationCoordinates = byteArrayOutputStream.toByteArray();
 
             hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes(LOCATION), locationCoordinates);
-            hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes(POPULATION), Bytes.toBytes(c.getName()));
-            hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes(STATE), Bytes.toBytes(c.getName()));
+            hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes(POPULATION), Bytes.toBytes(c.getPopulation()));
+            hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes(STATE), Bytes.toBytes(c.getState()));
             hTable.put(hbase);
         }
     }
@@ -123,5 +123,38 @@ public class HBaseCityDAO {
             cities.add(city);
         }
         return cities;
+    }
+
+    public void addColumnFamilyValue(Connection connection, String table, String columnFamily, String value) throws IOException {
+        TableName tableName = TableName.valueOf(table);
+        Table hTable = null;
+        if (connection.getAdmin().tableExists(tableName)) {
+            hTable = connection.getTable(tableName);
+        }
+
+        // TODO: Fix Filters, because at the moment every data has "ja" value at fussball columnfamily!
+
+        Filter filterHamburg = new SingleColumnValueFilter(Bytes.toBytes(columnFamily),
+                Bytes.toBytes(CITY), CompareFilter.CompareOp.EQUAL, Bytes.toBytes("HAMBURG"));
+        Filter filterBremen = new SingleColumnValueFilter(Bytes.toBytes(columnFamily),
+                Bytes.toBytes(CITY), CompareFilter.CompareOp.EQUAL, Bytes.toBytes("BREMEN"));
+        Scan scan = new Scan();
+        scan.setFilter(filterHamburg);
+        scan.setFilter(filterBremen);
+        ResultScanner rs = hTable.getScanner(scan);
+        List<City> cities = new ArrayList<>();
+        for(Result result : rs) {
+            String id = Bytes.toString(result.getRow());
+            // TODO: "CityData" is not very pretty solution!
+            City city = getCityNameByPostalcode(connection, table, "CityData", id);
+            cities.add(city);
+        }
+
+        for(City city : cities) {
+            Put put = new Put(Bytes.toBytes(city.getId()));
+
+            put.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes("FussballStadt"), Bytes.toBytes(value));
+            hTable.put(put);
+        }
     }
 }

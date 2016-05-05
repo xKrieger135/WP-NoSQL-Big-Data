@@ -159,6 +159,11 @@ public class HBaseToolkitBusinesslogic {
         admin.deleteTable(tableName);
     }
 
+    public void addColumnFamilyValue(String table, String columnFamily, String value) throws IOException {
+        Connection connection = getServerConnection();
+        hBaseCityDAO.addColumnFamilyValue(connection, table, columnFamily, value);
+    }
+
     /**
      * This method will get the HBase connection.
      *

@@ -67,4 +67,11 @@ public class HBaseToolkitFassade {
             hBaseToolkitBusinesslogic.dropTable(table);
         }
     }
+
+    public void addColumnFamilyValue(String table, String columnFamily, String value) throws IOException {
+        if(!table.isEmpty() && !columnFamily.isEmpty() && !value.isEmpty()) {
+            System.out.println(table + columnFamily + value);
+            hBaseToolkitBusinesslogic.addColumnFamilyValue(table, columnFamily, value);
+        }
+    }
 }
