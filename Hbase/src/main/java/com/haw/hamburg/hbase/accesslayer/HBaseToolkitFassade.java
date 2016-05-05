@@ -27,9 +27,9 @@ public class HBaseToolkitFassade {
         this.hBaseToolkitBusinesslogic = new HBaseToolkitBusinesslogic();
     }
 
-    public void databaseImport(List<JSONObject> importData, String tableName, String columnFamilyName) throws IOException, JSONException {
-        if(importData != null && !(tableName.equals("")) && !(columnFamilyName.equals(""))) {
-            hBaseToolkitBusinesslogic.databaseImport(importData, tableName, columnFamilyName);
+    public void databaseImport(List<JSONObject> importData, String table, String columnFamily) throws IOException, JSONException {
+        if(importData != null && !(table.isEmpty()) && !(columnFamily.isEmpty())) {
+            hBaseToolkitBusinesslogic.databaseImport(importData, table, columnFamily);
         }
     }
 
@@ -43,15 +43,28 @@ public class HBaseToolkitFassade {
         return  cityAsJSON;
     }
 
-    public JSONObject searchPostalcodeByCity(String tableName, String columnFamilyName, String city) throws IOException {
+    public JSONObject searchPostalcodeByCity(String tableName, String columnFamilyName, String city) throws IOException, JSONException {
         List<String> postalcodes = hBaseToolkitBusinesslogic.getPostalcodeByCityName(tableName, columnFamilyName, city);
-        JSONObject postalcodesAsJson = new JSONObject(postalcodes);
+        JSONObject postalcodesAsJson = new JSONObject();
+        postalcodesAsJson.put("Postalcodes", postalcodes);
         return postalcodesAsJson;
     }
 
     public void createTable(String table, String columnFamily) throws IOException {
         if(!(table.isEmpty())) {
             hBaseToolkitBusinesslogic.createTable(table, columnFamily);
+        }
+    }
+
+    public void addColumnFamily(String table, String columnFamily) throws IOException {
+        if (!table.isEmpty() && !columnFamily.isEmpty()) {
+            hBaseToolkitBusinesslogic.addColumnFamily(table, columnFamily);
+        }
+    }
+
+    public void dropTable(String table) throws IOException {
+        if (!table.isEmpty()) {
+            hBaseToolkitBusinesslogic.dropTable(table);
         }
     }
 }

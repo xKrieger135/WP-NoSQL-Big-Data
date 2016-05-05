@@ -54,7 +54,6 @@ public class HBaseCityDAO {
             hbase.addColumn(Bytes.toBytes(columnFamilyName), Bytes.toBytes(STATE), Bytes.toBytes(c.getName()));
             hTable.put(hbase);
         }
-        System.out.println("Import Successful!");
     }
 
     /**

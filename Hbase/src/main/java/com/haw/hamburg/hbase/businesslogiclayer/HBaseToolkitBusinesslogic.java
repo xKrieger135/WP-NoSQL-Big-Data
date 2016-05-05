@@ -44,6 +44,14 @@ public class HBaseToolkitBusinesslogic {
         this.hBaseCityDAO = new HBaseCityDAO();
     }
 
+    /**
+     *
+     * @param importData
+     * @param table
+     * @param columnFamilyName
+     * @throws IOException
+     * @throws JSONException
+     */
     public void databaseImport(List<JSONObject> importData, String table, String columnFamilyName) throws IOException, JSONException {
         Connection connection = getServerConnection();
 
@@ -64,12 +72,28 @@ public class HBaseToolkitBusinesslogic {
         closeConnection(connection);
     }
 
+    /**
+     *
+     * @param table
+     * @param columnFamilyName
+     * @param postalcode
+     * @return
+     * @throws IOException
+     */
     public City getCityNameByPostalcode(String table, String columnFamilyName, String postalcode) throws IOException {
         Connection connection = getServerConnection();
         City city = hBaseCityDAO.getCityNameByPostalcode(connection, table, columnFamilyName, postalcode);
         return city;
     }
 
+    /**
+     *
+     * @param table
+     * @param columnFamilyName
+     * @param cityName
+     * @return
+     * @throws IOException
+     */
     public List<String> getPostalcodeByCityName(String table, String columnFamilyName, String cityName) throws IOException {
         Connection connection = getServerConnection();
         List<City> cities = hBaseCityDAO.getPostalcodeByCityName(connection, table, columnFamilyName, cityName);
@@ -127,6 +151,14 @@ public class HBaseToolkitBusinesslogic {
         }
     }
 
+    public void dropTable(String table) throws IOException {
+        Connection connection = getServerConnection();
+        TableName tableName = TableName.valueOf(table);
+        Admin admin = connection.getAdmin();
+        admin.disableTable(tableName);
+        admin.deleteTable(tableName);
+    }
+
     /**
      * This method will get the HBase connection.
      *
@@ -150,30 +182,4 @@ public class HBaseToolkitBusinesslogic {
             throw new RuntimeException("While closing the connection went something wrong!", e);
         }
     }
-
-//    public static void main(String[] args) {
-//        HBaseToolkitBusinesslogic x = new HBaseToolkitBusinesslogic();
-//        IFileReaderAdapter f = new FileReaderAdapter();
-//        IJSONConverterAdapter json = new JSONConverterAdapter();
-//        List<String> l = null;
-//        List<JSONObject> j = null;
-//        System.out.println("OK");
-//        try {
-//            l = f.readFile("/home/nosql/Documents/WP-NoSQL-Big-Data/Doc/plz.data");
-//            j = json.convertToJSONList(l);
-//            System.out.println("OK AGAIN");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            x.databaseImport(j, "BigData", "CityData");
-//            x.getCityNameByPostalcode("BigData", "CityData", "99950");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
 }
