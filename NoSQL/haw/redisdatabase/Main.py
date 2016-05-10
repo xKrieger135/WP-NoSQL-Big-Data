@@ -65,6 +65,7 @@ def show_postalcode_with_mongodb():
 @app.route('/import')
 def import_data():
     redis_db.import_data_to_redis()
+    mongo_db.import_data_to_mongodb()
     return render_template('index.html')
 
 

@@ -1,13 +1,10 @@
 package com.haw.hamburg.util.jsonconverteradapter;
 
 
-import com.haw.hamburg.util.filereaderadapter.FileReaderAdapter;
-import com.haw.hamburg.util.filereaderadapter.interfaces.IFileReaderAdapter;
 import com.haw.hamburg.util.jsonconverteradapter.interfaces.IJSONConverterAdapter;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

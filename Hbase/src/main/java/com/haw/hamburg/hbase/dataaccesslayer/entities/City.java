@@ -7,13 +7,24 @@ import java.util.Map;
  */
 public class City {
 
-    private int id;
+    private String id;
     private String name;
     private Map<Double, Double> location;
     private int population;
     private String state;
+    private String footballCity;
 
-    public City(int id, String name, Map<Double, Double> location, int population, String state) {
+    public City(String id, String name, Map<Double, Double> location, int population, String state, String footballCity) {
+        this.id = id;
+        this.name = name;
+        this.location = location;
+        this.population = population;
+        this.state = state;
+        this.footballCity = footballCity;
+    }
+
+
+    public City(String id, String name, Map<Double, Double> location, int population, String state) {
         this.id = id;
         this.name = name;
         this.location = location;
@@ -21,7 +32,7 @@ public class City {
         this.state = state;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -58,7 +69,7 @@ public class City {
 
     @Override
     public int hashCode() {
-        int result = getId();
+        int result = getId().hashCode();
         result = 31 * result + getName().hashCode();
         result = 31 * result + getLocation().hashCode();
         result = 31 * result + getPopulation();
@@ -69,11 +80,12 @@ public class City {
     @Override
     public String toString() {
         return "City{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", location=" + location +
                 ", population=" + population +
                 ", state='" + state + '\'' +
+                ", footballCity='" + footballCity + '\'' +
                 '}';
     }
 }
