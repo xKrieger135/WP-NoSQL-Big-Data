@@ -12,6 +12,17 @@ public class City {
     private Map<Double, Double> location;
     private int population;
     private String state;
+    private String footballCity;
+
+    public City(String id, String name, Map<Double, Double> location, int population, String state, String footballCity) {
+        this.id = id;
+        this.name = name;
+        this.location = location;
+        this.population = population;
+        this.state = state;
+        this.footballCity = footballCity;
+    }
+
 
     public City(String id, String name, Map<Double, Double> location, int population, String state) {
         this.id = id;
@@ -74,6 +85,7 @@ public class City {
                 ", location=" + location +
                 ", population=" + population +
                 ", state='" + state + '\'' +
+                ", footballCity='" + footballCity + '\'' +
                 '}';
     }
 }

@@ -77,10 +77,13 @@ public class HBaseCityDAO {
         byte[] populationBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes(POPULATION));
         byte[] stateBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes(STATE));
         byte[] locationBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes(LOCATION));
+        byte[] footballCityBytes = result.getValue(Bytes.toBytes("fussball"), Bytes.toBytes("footballCity"));
 
         String cityName = Bytes.toString(cityBytes);
         String state = Bytes.toString(stateBytes);
         int population = Bytes.toInt(populationBytes);
+        String footballCity = Bytes.toString(footballCityBytes);
+        System.out.println(footballCity);
 
         ByteArrayInputStream b = new ByteArrayInputStream(locationBytes);
         ObjectInputStream o = new ObjectInputStream(b);
@@ -91,7 +94,8 @@ public class HBaseCityDAO {
             e.printStackTrace();
         }
 
-        City city = new City(postalcode, cityName, locationCoordinates, population, state);
+        City city = new City(postalcode, cityName, locationCoordinates, population, state, footballCity);
+        System.out.println(city.toString());
 
         return city;
     }
@@ -122,6 +126,7 @@ public class HBaseCityDAO {
             City city = getCityNameByPostalcode(connection, tableName, columnFamilyName, id);
             cities.add(city);
         }
+        System.out.println(cities.size());
         return cities;
     }
 
@@ -131,19 +136,20 @@ public class HBaseCityDAO {
         if (connection.getAdmin().tableExists(tableName)) {
             hTable = connection.getTable(tableName);
         }
+        System.out.println(value);
 
-        // TODO: Fix Filters, because at the moment every data has "ja" value at fussball columnfamily!
-
-        Filter filterHamburg = new SingleColumnValueFilter(Bytes.toBytes(columnFamily),
+        Filter filterHamburg = new SingleColumnValueFilter(Bytes.toBytes("CityData"),
                 Bytes.toBytes(CITY), CompareFilter.CompareOp.EQUAL, Bytes.toBytes("HAMBURG"));
-        Filter filterBremen = new SingleColumnValueFilter(Bytes.toBytes(columnFamily),
+        Filter filterBremen = new SingleColumnValueFilter(Bytes.toBytes("CityData"),
                 Bytes.toBytes(CITY), CompareFilter.CompareOp.EQUAL, Bytes.toBytes("BREMEN"));
+
         Scan scan = new Scan();
         scan.setFilter(filterHamburg);
         scan.setFilter(filterBremen);
         ResultScanner rs = hTable.getScanner(scan);
         List<City> cities = new ArrayList<>();
         for(Result result : rs) {
+
             String id = Bytes.toString(result.getRow());
             // TODO: "CityData" is not very pretty solution!
             City city = getCityNameByPostalcode(connection, table, "CityData", id);
@@ -153,7 +159,7 @@ public class HBaseCityDAO {
         for(City city : cities) {
             Put put = new Put(Bytes.toBytes(city.getId()));
 
-            put.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes("FussballStadt"), Bytes.toBytes(value));
+            put.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes("footballCity"), Bytes.toBytes(value));
             hTable.put(put);
         }
     }
