@@ -18,6 +18,10 @@ Aufgaben für das WP NoSQL und Big Data
 - https://realpython.com/blog/python/flask-by-example-integrating-flask-and-angularjs/
 - https://github.com/angularjs-de/angularjs-tutorial-code
 - http://agiliq.com/blog/2015/03/getting-started-with-redis-py/
+- 
+
+### Spotify Project
+- https://github.com/thelinmichael/spotify-web-api-java
 
 
 
