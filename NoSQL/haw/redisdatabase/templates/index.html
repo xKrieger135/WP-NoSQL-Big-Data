@@ -50,7 +50,18 @@
             <div class="acc-tab">
                 <dt class="closed">Wide Column Database</dt>
                 <dd class="tab">
-                    <p>hallo welt</p>
+                    <form action="{{ url_for('search_postalcode_by_city_with_hbase') }}" method="get" class="showplz">
+                        <p>City:<br/><br/>
+                            <input placeholder="City" type="text" size="30" name="city-hbase"/>
+                            <input type=submit value=Share/>
+                        </p>
+                    </form>
+                    <form action="{{ url_for('search_city_by_postalcode_with_hbase') }}" method="get" class="showcity-hbase">
+                        <p>Postal Code:<br/><br/>
+                            <input placeholder="Postal Code" type="text" size="30" name="postalcode-hbase"/>
+                            <input type=submit value=Share/>
+                        </p>
+                    </form>
                 </dd>
             </div>
         </dl>
@@ -68,7 +79,7 @@
                 <ul class=city>
                     <table class="table-citys" style="width: 75%" border="true">
                         {% for entry in city %}
-                        {% for k, v in entry.keys(), entry.values() %}
+                        {% for k, v in entry.items() %}
                         <tr>
                             <td> {{ k }}</td>
                             <td> {{ v }}</td>

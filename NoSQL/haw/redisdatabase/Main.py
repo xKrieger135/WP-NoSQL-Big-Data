@@ -2,11 +2,13 @@ import json, redis
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash
 
+from haw.hbase.Hbase_DB import Hbase_DB
 from haw.mongodb.Mongo_DB import Mongo_DB
 from haw.redisdatabase.Redis_db import Redis_db
 
 redis_db = Redis_db()
 mongo_db = Mongo_DB()
+hbase = Hbase_DB()
 
 app = Flask(__name__)
 
@@ -68,6 +70,19 @@ def import_data():
     mongo_db.import_data_to_mongodb()
     return render_template('index.html')
 
+@app.route('/hbase/postalcode')
+def search_city_by_postalcode_with_hbase():
+    postalcode = request.args['postalcode-hbase']
+    city = hbase.searchCityByPostalcode(postalcode)
+    result = [city]
+    return render_template('index.html', city=result)
+
+@app.route('/hbase/city')
+def search_postalcode_by_city_with_hbase():
+    city = request.args['city-hbase']
+    postalcode = hbase.searchPostalcodeByCity(city)
+    result = [postalcode]
+    return render_template('index.html', postalcode=result)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -84,6 +84,7 @@ public class HBaseToolkitBusinesslogic {
     public City getCityNameByPostalcode(String table, String columnFamilyName, String postalcode) throws IOException {
         Connection connection = getServerConnection();
         City city = hBaseCityDAO.getCityNameByPostalcode(connection, table, columnFamilyName, postalcode);
+        closeConnection(connection);
         return city;
     }
 
@@ -104,6 +105,7 @@ public class HBaseToolkitBusinesslogic {
         for(City city : cities) {
             postalcodes.add(city.getId());
         }
+        closeConnection(connection);
         return postalcodes;
     }
 
