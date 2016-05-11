@@ -37,13 +37,16 @@ public class HBaseToolkitFassade {
     public JSONObject searchCityByPostalcode(String tableName, String columnFamilyName, String postalcode) throws IOException, JSONException {
         City city = hBaseToolkitBusinesslogic.getCityNameByPostalcode(tableName, columnFamilyName, postalcode);
         JSONObject cityAsJSON = new JSONObject();
-        cityAsJSON.append("Postalcode", city.getId());
-        cityAsJSON.append("City", city.getName());
-        cityAsJSON.append("Population", city.getPopulation());
-        cityAsJSON.append("Location" ,new JSONObject(city.getLocation()));
-        // Add this only if the footballcity attribute contains a String "ja"
+
+        cityAsJSON.put("State", city.getState());
+        cityAsJSON.put("Location", city.getLocation());
+        cityAsJSON.put("Population", city.getPopulation());
+        cityAsJSON.put("City", city.getName());
+        cityAsJSON.put("Postalcode", city.getId());
+
+//        // Add this only if the footballcity attribute contains a String "ja"
         if(city.getFootballCity() != null) {
-            cityAsJSON.append("FootballCity", city.getFootballCity());
+            cityAsJSON.put("FootballCity", city.getFootballCity());
         }
         return  cityAsJSON;
     }
@@ -75,7 +78,6 @@ public class HBaseToolkitFassade {
 
     public void addColumnFamilyValue(String table, String columnFamily, String rowIdentifier, String value) throws IOException {
         if(!table.isEmpty() && !columnFamily.isEmpty() && !value.isEmpty()) {
-            System.out.println(table + columnFamily + value);
             hBaseToolkitBusinesslogic.addColumnFamilyValue(table, columnFamily, rowIdentifier, value);
         }
     }
