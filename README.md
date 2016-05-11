@@ -22,6 +22,8 @@ Aufgaben für das WP NoSQL und Big Data
 
 ### Spotify Project
 - https://github.com/thelinmichael/spotify-web-api-java
+- https://developer.spotify.com/web-api/search-item/
+- https://developer.spotify.com/web-api/console/get-search-item/?q=%22doom%20metal%22&type=playlist#complete
 
 
 
