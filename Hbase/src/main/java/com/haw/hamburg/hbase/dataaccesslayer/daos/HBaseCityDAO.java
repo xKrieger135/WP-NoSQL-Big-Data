@@ -1,5 +1,6 @@
 package com.haw.hamburg.hbase.dataaccesslayer.daos;
 
+import com.google.common.collect.Iterables;
 import com.haw.hamburg.hbase.dataaccesslayer.entities.City;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.KeyValue;
@@ -9,20 +10,27 @@ import org.apache.hadoop.hbase.filter.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Krieger135 on 4/22/16.
  */
 public class HBaseCityDAO {
 
+    // Columnfamily Columns
     private final String CITY = "City";
     private final String LOCATION = "Location";
     private final String POPULATION = "Population";
     private final String STATE = "State";
+    private final String FOOTBALLCITY = "footballCity";
+
+    // Columnfamilies
+    private final String CITY_DATA = "CityData";
+    private final String FUSSBALL = "fussball";
+
+    // Values
+    private final String HAMBURG = "HAMBURG";
+    private final String BREMEN = "BREMEN";
 
     public HBaseCityDAO() {
 
@@ -77,13 +85,12 @@ public class HBaseCityDAO {
         byte[] populationBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes(POPULATION));
         byte[] stateBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes(STATE));
         byte[] locationBytes = result.getValue(Bytes.toBytes(columnFamilyName), Bytes.toBytes(LOCATION));
-        byte[] footballCityBytes = result.getValue(Bytes.toBytes("fussball"), Bytes.toBytes("footballCity"));
+        byte[] footballCityBytes = result.getValue(Bytes.toBytes(FUSSBALL), Bytes.toBytes(FOOTBALLCITY));
 
         String cityName = Bytes.toString(cityBytes);
         String state = Bytes.toString(stateBytes);
         int population = Bytes.toInt(populationBytes);
         String footballCity = Bytes.toString(footballCityBytes);
-        System.out.println(footballCity);
 
         ByteArrayInputStream b = new ByteArrayInputStream(locationBytes);
         ObjectInputStream o = new ObjectInputStream(b);
@@ -95,7 +102,6 @@ public class HBaseCityDAO {
         }
 
         City city = new City(postalcode, cityName, locationCoordinates, population, state, footballCity);
-        System.out.println(city.toString());
 
         return city;
     }
@@ -126,40 +132,48 @@ public class HBaseCityDAO {
             City city = getCityNameByPostalcode(connection, tableName, columnFamilyName, id);
             cities.add(city);
         }
-        System.out.println(cities.size());
         return cities;
     }
 
-    public void addColumnFamilyValue(Connection connection, String table, String columnFamily, String value) throws IOException {
+    /**
+     * This method will add values to the given table and columnFamily. The special row will be searched by rowIdentifier.
+     * At the moment the rowIdentifier is hard coded for a special use case.
+     *
+     * @param connection     This is the connection, to get access to the HBase database.
+     * @param table          This is the tableName, where this data should be imported.
+     * @param columnFamily   This is the columnFamily, at the given tableName, where data should be imported.
+     * @param rowIdentifier  This is the special identifier for the row, where the value will be inserted.
+     * @param value          This is the value, which should be inserted.
+     * @throws IOException   This Exception will be thrown, when something went wrong, while inserting the data.
+     */
+    public void addColumnFamilyValue(Connection connection, String table, String columnFamily, String rowIdentifier, String value) throws IOException {
         TableName tableName = TableName.valueOf(table);
         Table hTable = null;
         if (connection.getAdmin().tableExists(tableName)) {
             hTable = connection.getTable(tableName);
         }
-        System.out.println(value);
 
-        Filter filterHamburg = new SingleColumnValueFilter(Bytes.toBytes("CityData"),
-                Bytes.toBytes(CITY), CompareFilter.CompareOp.EQUAL, Bytes.toBytes("HAMBURG"));
-        Filter filterBremen = new SingleColumnValueFilter(Bytes.toBytes("CityData"),
-                Bytes.toBytes(CITY), CompareFilter.CompareOp.EQUAL, Bytes.toBytes("BREMEN"));
+        Filter filterHamburg = new SingleColumnValueFilter(Bytes.toBytes(CITY_DATA),
+                Bytes.toBytes(CITY), CompareFilter.CompareOp.EQUAL, Bytes.toBytes(HAMBURG));
+        Filter filterBremen = new SingleColumnValueFilter(Bytes.toBytes(CITY_DATA),
+                Bytes.toBytes(CITY), CompareFilter.CompareOp.EQUAL, Bytes.toBytes(BREMEN));
 
-        Scan scan = new Scan();
-        scan.setFilter(filterHamburg);
-        scan.setFilter(filterBremen);
-        ResultScanner rs = hTable.getScanner(scan);
+        Scan scanHamburg = new Scan();
+        Scan scanBremen = new Scan();
+        scanHamburg.setFilter(filterHamburg);
+        scanBremen.setFilter(filterBremen);
+        ResultScanner rsh = hTable.getScanner(scanHamburg);
+        ResultScanner rsb = hTable.getScanner(scanBremen);
         List<City> cities = new ArrayList<>();
-        for(Result result : rs) {
-
+        for(Result result : Iterables.concat(rsh, rsb)) {
             String id = Bytes.toString(result.getRow());
-            // TODO: "CityData" is not very pretty solution!
-            City city = getCityNameByPostalcode(connection, table, "CityData", id);
+            City city = getCityNameByPostalcode(connection, table, CITY_DATA, id);
             cities.add(city);
         }
 
         for(City city : cities) {
             Put put = new Put(Bytes.toBytes(city.getId()));
-
-            put.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes("footballCity"), Bytes.toBytes(value));
+            put.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes(FOOTBALLCITY), Bytes.toBytes(value));
             hTable.put(put);
         }
     }

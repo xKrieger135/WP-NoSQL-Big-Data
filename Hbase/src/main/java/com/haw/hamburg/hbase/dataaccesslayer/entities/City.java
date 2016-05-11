@@ -52,6 +52,10 @@ public class City {
         return state;
     }
 
+    public String getFootballCity() {
+        return footballCity;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -59,11 +63,12 @@ public class City {
 
         City city = (City) o;
 
-        if (getId() != city.getId()) return false;
         if (getPopulation() != city.getPopulation()) return false;
+        if (!getId().equals(city.getId())) return false;
         if (!getName().equals(city.getName())) return false;
         if (!getLocation().equals(city.getLocation())) return false;
-        return getState().equals(city.getState());
+        if (!getState().equals(city.getState())) return false;
+        return getFootballCity() != null ? getFootballCity().equals(city.getFootballCity()) : city.getFootballCity() == null;
 
     }
 
@@ -74,6 +79,7 @@ public class City {
         result = 31 * result + getLocation().hashCode();
         result = 31 * result + getPopulation();
         result = 31 * result + getState().hashCode();
+        result = 31 * result + (getFootballCity() != null ? getFootballCity().hashCode() : 0);
         return result;
     }
 

@@ -4,6 +4,7 @@ import com.haw.hamburg.hbase.businesslogiclayer.HBaseToolkitBusinesslogic;
 import com.haw.hamburg.hbase.dataaccesslayer.entities.City;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.mortbay.util.ajax.JSON;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -40,6 +41,10 @@ public class HBaseToolkitFassade {
         cityAsJSON.append("City", city.getName());
         cityAsJSON.append("Population", city.getPopulation());
         cityAsJSON.append("Location" ,new JSONObject(city.getLocation()));
+        // Add this only if the footballcity attribute contains a String "ja"
+        if(city.getFootballCity() != null) {
+            cityAsJSON.append("FootballCity", city.getFootballCity());
+        }
         return  cityAsJSON;
     }
 
@@ -68,10 +73,10 @@ public class HBaseToolkitFassade {
         }
     }
 
-    public void addColumnFamilyValue(String table, String columnFamily, String value) throws IOException {
+    public void addColumnFamilyValue(String table, String columnFamily, String rowIdentifier, String value) throws IOException {
         if(!table.isEmpty() && !columnFamily.isEmpty() && !value.isEmpty()) {
             System.out.println(table + columnFamily + value);
-            hBaseToolkitBusinesslogic.addColumnFamilyValue(table, columnFamily, value);
+            hBaseToolkitBusinesslogic.addColumnFamilyValue(table, columnFamily, rowIdentifier, value);
         }
     }
 }

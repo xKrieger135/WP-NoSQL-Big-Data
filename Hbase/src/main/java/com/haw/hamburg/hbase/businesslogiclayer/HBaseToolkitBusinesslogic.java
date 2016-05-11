@@ -45,12 +45,12 @@ public class HBaseToolkitBusinesslogic {
     }
 
     /**
+     * This method imports data into the HBase DB.
      *
-     * @param importData
-     * @param table
-     * @param columnFamilyName
-     * @throws IOException
-     * @throws JSONException
+     * @param importData          This is the data, which should be imported into the database.
+     * @param table               This is the tableName, where this data should be imported.
+     * @param columnFamilyName    This is the columnFamily, at the given tableName, where data should be imported.
+     * @throws IOException        This Exception will be thrown, when something went wrong, while importing the data.
      */
     public void databaseImport(List<JSONObject> importData, String table, String columnFamilyName) throws IOException, JSONException {
         Connection connection = getServerConnection();
@@ -73,12 +73,13 @@ public class HBaseToolkitBusinesslogic {
     }
 
     /**
+     * This method gets one city, for the given postalcode and will return all of the city data.
      *
-     * @param table
-     * @param columnFamilyName
-     * @param postalcode
-     * @return
-     * @throws IOException
+     * @param table              This is the tableName, where this data should be imported.
+     * @param columnFamilyName   This is the columnFamily, at the given tableName, where data should be imported.
+     * @param postalcode         This is the given postalcode, for which the city will be searched.
+     * @return                   Returns the entire city for the given postalcode of the city.
+     * @throws IOException       This Exception will be thrown, when something went wrong, while importing the data.
      */
     public City getCityNameByPostalcode(String table, String columnFamilyName, String postalcode) throws IOException {
         Connection connection = getServerConnection();
@@ -87,12 +88,14 @@ public class HBaseToolkitBusinesslogic {
     }
 
     /**
+     * This method gets all postalcodes for one given city.
      *
-     * @param table
-     * @param columnFamilyName
-     * @param cityName
-     * @return
-     * @throws IOException
+     * @param table              This is the tableName, where this data should be imported.
+     * @param columnFamilyName   This is the columnFamily, at the given tableName, where data should be imported.
+     * @param cityName           This is the given city, for which the postalcodes will be searched.
+     * @return                   Returns a list with all city data. The result is stored into a list, because of the
+     *                           possibility of multiple postalcodes for one city.
+     * @throws IOException       This Exception will be thrown, when something went wrong, while importing the data.
      */
     public List<String> getPostalcodeByCityName(String table, String columnFamilyName, String cityName) throws IOException {
         Connection connection = getServerConnection();
@@ -107,9 +110,9 @@ public class HBaseToolkitBusinesslogic {
     /**
      * This method creates one HBaseTable. For HBase Tables there must be at least one column family for creation.
      *
-     * @param tableName
-     * @param columnFamily
-     * @throws IOException
+     * @param tableName     This is the name of table, which should be created.
+     * @param columnFamily  This is the columnFamily, which should be added.
+     * @throws IOException  This exception will be thrown, when something went wrong while creating the table.
      */
     public void createTable(String tableName, String columnFamily) throws IOException {
         Connection connection = getServerConnection();
@@ -127,8 +130,8 @@ public class HBaseToolkitBusinesslogic {
      * This method will add a columnFamily to the given HBaseTable. Please notice, that this method is only to use,
      * while table creation, because tables need at least one column family.
      *
-     * @param hTable
-     * @param columnFamily
+     * @param hTable        This is the table, where the columnFamily will be added.
+     * @param columnFamily  This is the columnFamily, which should be added while table creation process.
      */
     private void addColumnFamily(HTableDescriptor hTable, String columnFamily) {
         hTable.addFamily(new HColumnDescriptor(columnFamily));
@@ -137,9 +140,9 @@ public class HBaseToolkitBusinesslogic {
     /**
      * This method will add column families to an existing table.
      *
-     * @param table
-     * @param columnFamilyName
-     * @throws IOException
+     * @param table             This is the given table, where the columnFamily will be added.
+     * @param columnFamilyName  This is the columnFamily name which will be added.
+     * @throws IOException      This exception will be thrown, when something went wrong while adding the columnFamily.
      */
     public void addColumnFamily(String table, String columnFamilyName) throws IOException {
         Connection connection = getServerConnection();
@@ -151,6 +154,12 @@ public class HBaseToolkitBusinesslogic {
         }
     }
 
+    /**
+     * This method will drop a HBase Table.
+     *
+     * @param table         This is the table, which should be deleted.
+     * @throws IOException  This exception will be thrown, when something went wrong while dropping the table.
+     */
     public void dropTable(String table) throws IOException {
         Connection connection = getServerConnection();
         TableName tableName = TableName.valueOf(table);
@@ -159,9 +168,19 @@ public class HBaseToolkitBusinesslogic {
         admin.deleteTable(tableName);
     }
 
-    public void addColumnFamilyValue(String table, String columnFamily, String value) throws IOException {
+    /**
+     * This method will add values to the given table and columnFamily. The special row will be searched by rowIdentifier.
+     * At the moment the rowIdentifier is hard coded for a special use case.
+     *
+     * @param table          This is the tableName, where this data should be imported.
+     * @param columnFamily   This is the columnFamily, at the given tableName, where data should be imported.
+     * @param rowIdentifier  This is the special identifier for the row, where the value will be inserted.
+     * @param value          This is the value, which should be inserted.
+     * @throws IOException   This Exception will be thrown, when something went wrong, while inserting the data.
+     */
+    public void addColumnFamilyValue(String table, String columnFamily, String rowIdentifier, String value) throws IOException {
         Connection connection = getServerConnection();
-        hBaseCityDAO.addColumnFamilyValue(connection, table, columnFamily, value);
+        hBaseCityDAO.addColumnFamilyValue(connection, table, columnFamily, rowIdentifier, value);
     }
 
     /**

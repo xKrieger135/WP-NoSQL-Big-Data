@@ -48,15 +48,16 @@ public class HBaseToolkitController {
         }
     }
 
-    @RequestMapping(value = "/search/city/{postalcode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/search/city/{postalcode}", method = RequestMethod.GET, produces = "application/json")
     public String searchCityByPostalcode(@PathVariable String postalcode) throws IOException, JSONException {
         JSONObject j = hBaseToolkitFassade.searchCityByPostalcode("BigData", "CityData", postalcode);
         return j.toString();
     }
 
-    @RequestMapping(value = "/search/postalcode/{city}", method = RequestMethod.GET)
+    @RequestMapping(value = "/search/postalcode/{city}", method = RequestMethod.GET, produces = "application/json")
     public String searchPostalcodeByCity(@PathVariable String city) throws IOException, JSONException {
         JSONObject j = hBaseToolkitFassade.searchPostalcodeByCity("BigData", "CityData", city);
+
         return j.toString();
     }
 
@@ -68,7 +69,7 @@ public class HBaseToolkitController {
         return new ResponseEntity<>(HttpStatus.CREATED.toString(), HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/add/{table}/{columnFamily}")
+    @RequestMapping(value = "/add/{table}/{columnFamily}", method = RequestMethod.GET, produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public ResponseEntity<String> addColumnFamily(@PathVariable String table, @PathVariable String columnFamily) throws IOException {
@@ -85,8 +86,8 @@ public class HBaseToolkitController {
     @RequestMapping(value = "/add/{table}/{columnFamily}/{value}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<String> addColumnFamilyValue(@PathVariable String table, @PathVariable String columnFamily, @PathVariable String value) throws IOException {
-        hBaseToolkitFassade.addColumnFamilyValue(table, columnFamily, value);
+    public ResponseEntity<String> addColumnFamilyValue(@PathVariable String table, @PathVariable String columnFamily, @PathVariable String rowIdentifier, @PathVariable String value) throws IOException {
+        hBaseToolkitFassade.addColumnFamilyValue(table, columnFamily, rowIdentifier, value);
         return new ResponseEntity<>(HttpStatus.OK.toString(), HttpStatus.OK);
     }
 }
