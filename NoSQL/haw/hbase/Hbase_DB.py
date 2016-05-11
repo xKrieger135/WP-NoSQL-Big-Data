@@ -27,8 +27,4 @@ class Hbase_DB:
         postalcodes.__setitem__("Postalcodes", response['Postalcodes'])
         return postalcodes
 
-# hbase = Hbase_DB()
-# print(hbase.searchCityByPostalcode("99950"))
-# print(hbase.searchPostalcodeByCity("HAMBURG"))
-
 
