@@ -6,6 +6,7 @@ class Hbase_DB:
     def searchCityByPostalcode(self, postalcode):
         url = "http://localhost:8080/search/city/" + postalcode
         response = requests.get(url).json()
+        print(response)
 
         city = dict()
         city.__setitem__("Postalcode", response['Postalcode'])

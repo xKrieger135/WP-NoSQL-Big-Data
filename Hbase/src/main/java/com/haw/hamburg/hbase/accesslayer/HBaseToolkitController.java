@@ -86,7 +86,8 @@ public class HBaseToolkitController {
     @RequestMapping(value = "/add/{table}/{columnFamily}/{value}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<String> addColumnFamilyValue(@PathVariable String table, @PathVariable String columnFamily, @PathVariable String rowIdentifier, @PathVariable String value) throws IOException {
+    public ResponseEntity<String> addColumnFamilyValue(@PathVariable String table, @PathVariable String columnFamily, @PathVariable String value) throws IOException {
+        String rowIdentifier = "";
         hBaseToolkitFassade.addColumnFamilyValue(table, columnFamily, rowIdentifier, value);
         return new ResponseEntity<>(HttpStatus.OK.toString(), HttpStatus.OK);
     }
